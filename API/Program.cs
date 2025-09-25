@@ -28,8 +28,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-builder.Services.AddAntiforgery();
-
 // ================= JWT Configuration ================= //
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "SuperSecretKey123456!");
@@ -79,7 +77,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseAntiforgery(); 
+app.UseStaticFiles();
 
 app.MapAccountEndpoint();
 
