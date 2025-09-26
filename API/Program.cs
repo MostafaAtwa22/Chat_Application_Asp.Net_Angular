@@ -1,6 +1,7 @@
 using API.Data;
 using API.EndPoints;
 using API.Models.Identity; // Make sure this namespace is included
+using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<TokenService>();
 
 // Add ASP.NET Core Identity services
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

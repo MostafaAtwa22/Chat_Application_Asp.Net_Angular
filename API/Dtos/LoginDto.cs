@@ -1,17 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace API.Dtos
 {
-    public class RegisterDto
+    public class LoginDto
     {
-        [Required]
-        [StringLength(20, MinimumLength = 3)]
-        public string UserName { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(50, MinimumLength = 3)]
-        public string FullName { get; set; } = string.Empty;
-
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
@@ -22,11 +13,5 @@ namespace API.Dtos
             ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character")]
         public string Password { get; set; } = string.Empty;
 
-        [Required]
-        [Compare("Password", ErrorMessage = "Passwords do not match")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-
-        [Required]
-        public IFormFile ProfileImage { get; set; } = default!;
     }
 }

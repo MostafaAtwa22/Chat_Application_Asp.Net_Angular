@@ -78,6 +78,34 @@ namespace API.EndPoints
                 );
             }).DisableAntiforgery();
 
+            group.MapPost("/login", async ([FromServices]UserManager<ApplicationUser> userManager,
+            [FromServices]TokenService tokenService, [FromBody]LoginDto loginDto) =>
+            {
+                var validationContext = new ValidationContext(loginDto);
+                var validationResults = new List<ValidationResult>();
+                bool isValid = Validator.TryValidateObject(loginDto, validationContext, validationResults, true);
+
+                if (!isValid)
+                {
+                    var errorMessages = validationResults.Select(vr => vr.ErrorMessage);
+                    return Results.BadRequest(
+                        Response<string>.Failure(string.Join("; ", errorMessages))
+                    );
+                }
+
+                var user = await userManager.FindByEmailAsync(loginDto.Email);
+                if (user is null)
+                    return Results.BadRequest(Response<string>.Failure("Use is not exists"));
+
+                var res = await userManager.CheckPasswordAsync(user, loginDto.Password);
+
+                if (!res)
+                    return Results.BadRequest(Response<string>.Failure("Some thing is wrong in email/passowrd"));
+
+                var token = tokenService.GenerateToken(user.Id, user.UserName!);
+
+                return Results.Ok(Response<string>.Success(token, "Login done successfully"));
+            });
             return group;
         }
     }
