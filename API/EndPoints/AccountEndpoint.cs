@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using API.Dtos;
+using API.Extensions;
 using API.Models.Identity;
 using API.Response;
 using API.Services;
@@ -106,6 +107,33 @@ namespace API.EndPoints
 
                 return Results.Ok(Response<string>.Success(token, "Login done successfully"));
             });
+
+            group.MapPost("/me", async (HttpContext httpContext,
+                [FromServices] UserManager<ApplicationUser> userManager) =>
+            {
+                // Check if user is authenticated first
+                if (!httpContext.User.Identity.IsAuthenticated)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var currentLoggedInUserId = httpContext.User.GetUserId();
+                
+                // Check if user ID is available (remove .ToString() since it should already be string)
+                if (string.IsNullOrEmpty(currentLoggedInUserId))
+                {
+                    return Results.Unauthorized();
+                }
+
+                // Get the user from the database
+                var user = await userManager.FindByIdAsync(currentLoggedInUserId);
+                if (user == null)
+                {
+                    return Results.NotFound("User not found");
+                }
+
+                return Results.Ok(Response<ApplicationUser>.Success(user, "User fetched successfully."));
+            }).RequireAuthorization();
             return group;
         }
     }

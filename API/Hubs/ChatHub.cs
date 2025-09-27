@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using API.Data;
 using API.Dtos;
 using API.Extensions;
+using API.Interfaces;
 using API.Models;
 using API.Models.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Hubs
 {
     [Authorize]
-    public class ChatHub : Hub
+    public class ChatHub : Hub<IChatClient>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
@@ -24,7 +25,7 @@ namespace API.Hubs
             _context = context;
         }
 
-        public async Task SendMessage(MessageRequsetDto message)
+        public async Task SendMessage(MessageResponseDto message)
         {
             var senderId = Context.User!.Identity!.Name;
             var receivedId = message.ReceiverId;
@@ -41,7 +42,7 @@ namespace API.Hubs
             await _context.Messages.AddAsync(newMessage);
             await _context.SaveChangesAsync();
 
-            await Clients.User(receivedId).SendAsync("ReceiveNewMessage", newMessage);
+            await Clients.User(receivedId).ReceiveNewMessage(newMessage);
         }
 
         public async Task LoadMessages(string receivedId, int pageNumber = 1)
@@ -78,19 +79,17 @@ namespace API.Hubs
                 }
             }
 
-            await Clients.User(currentUser.Id).SendAsync("ReceiveMessageList", messages);
+            await Clients.User(currentUser.Id).ReceiveMessageList(messages);
         }
 
-        public async Task NotifyTyping(string recieiverUserName)
+        public async Task NotifyTyping(string receiverUserName)
         {
-            var senderUserName = Context.User!.Identity!.Name;
-            if (senderUserName is null)
-                return;
+            var senderUserName = Context.User?.Identity?.Name;
+            if (string.IsNullOrEmpty(senderUserName)) return;
 
-            var connectionId = _onlineUsers.Values.FirstOrDefault(x => x.UserName == recieiverUserName)?.ConnectionId;
-
-            if (connectionId is null)
-                await Clients.Client(connectionId!).SendAsync("NotifyTypingToUser", senderUserName);
+            var connectionId = _onlineUsers.Values.FirstOrDefault(x => x.UserName == receiverUserName)?.ConnectionId;
+            if (connectionId != null)
+                await Clients.Client(connectionId).NotifyTypingToUser(senderUserName);
         }
 
         public override async Task OnConnectedAsync()
@@ -114,13 +113,13 @@ namespace API.Hubs
                 };
                 _onlineUsers.TryAdd(userName!, user);
 
-                await Clients.AllExcept(connectionId!).SendAsync("Notify", currentUser);
+                await Clients.AllExcept(connectionId!).Notify(currentUser!);
             }
 
             if (!string.IsNullOrEmpty(receivedId))
                 await LoadMessages(receivedId);
 
-            await Clients.All.SendAsync("OnlineUsers", await GetAllUsers());
+            await Clients.All.OnlineUsers(await GetAllUsers());
         }
 
         private async Task<IEnumerable<OnlineUserDto>> GetAllUsers()
@@ -148,7 +147,7 @@ namespace API.Hubs
             var userName = Context.User!.Identity!.Name;
 
             _onlineUsers.TryRemove(userName!, out _);
-            await Clients.All.SendAsync("OnlineUsers", await GetAllUsers());
+            await Clients.All.OnlineUsers(await GetAllUsers());
         }
     }
 } 
