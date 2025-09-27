@@ -44,6 +44,43 @@ namespace API.Hubs
             await Clients.User(receivedId).SendAsync("ReceiveNewMessage", newMessage);
         }
 
+        public async Task LoadMessages(string receivedId, int pageNumber = 1)
+        {
+            int pageSize = 10;
+            var userName = Context!.User!.Identity!.Name;
+
+            var currentUser = await _userManager.FindByNameAsync(userName!);
+            if (currentUser is null)
+                return;
+
+            List<MessageRequestDto> messages = await _context.Messages
+                .Where(x => x.ReceiverId == currentUser!.Id && x.SenderId == receivedId
+                || x.ReceiverId == receivedId && x.SenderId == currentUser!.Id)
+                .OrderByDescending(x => x.SendingTime)
+                .Skip((pageNumber - 1) * pageSize)
+                .OrderBy(x => x.SendingTime)
+                .Select(x => new MessageRequestDto
+                {
+                    Id = x.Id,
+                    Content = x.Content,
+                    SendingTime = x.SendingTime,
+                    ReceiverId = x.ReceiverId,
+                    SenderId = x.SenderId
+                }).ToListAsync();
+
+            foreach (var message in messages)
+            {
+                var msg = await _context.Messages.FirstOrDefaultAsync(x => x.Id == message.Id);
+                if (msg is not null && msg.ReceiverId == currentUser.Id)
+                {
+                    msg.IsReaded = true;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            await Clients.User(currentUser.Id).SendAsync("ReceiveMessageList", messages);
+        }
+
         public async Task NotifyTyping(string recieiverUserName)
         {
             var senderUserName = Context.User!.Identity!.Name;
@@ -55,6 +92,7 @@ namespace API.Hubs
             if (connectionId is null)
                 await Clients.Client(connectionId!).SendAsync("NotifyTypingToUser", senderUserName);
         }
+
         public override async Task OnConnectedAsync()
         {
             var httpContext = Context.GetHttpContext();
@@ -78,6 +116,10 @@ namespace API.Hubs
 
                 await Clients.AllExcept(connectionId!).SendAsync("Notify", currentUser);
             }
+
+            if (!string.IsNullOrEmpty(receivedId))
+                await LoadMessages(receivedId);
+
             await Clients.All.SendAsync("OnlineUsers", await GetAllUsers());
         }
 
@@ -109,4 +151,4 @@ namespace API.Hubs
             await Clients.All.SendAsync("OnlineUsers", await GetAllUsers());
         }
     }
-}
+} 
