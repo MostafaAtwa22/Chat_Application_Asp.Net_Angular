@@ -25,7 +25,7 @@ namespace API.Hubs
             _context = context;
         }
 
-        public async Task SendMessage(MessageResponseDto message)
+        public async Task SendMessage(MessageRequestDto message)
         {
             var senderId = Context.User!.Identity!.Name;
             var receivedId = message.ReceiverId;
@@ -54,13 +54,14 @@ namespace API.Hubs
             if (currentUser is null)
                 return;
 
-            List<MessageRequestDto> messages = await _context.Messages
+            List<MessageReponseDto> messages = await _context.Messages
                 .Where(x => x.ReceiverId == currentUser!.Id && x.SenderId == receivedId
                 || x.ReceiverId == receivedId && x.SenderId == currentUser!.Id)
                 .OrderByDescending(x => x.SendingTime)
                 .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .OrderBy(x => x.SendingTime)
-                .Select(x => new MessageRequestDto
+                .Select(x => new MessageReponseDto
                 {
                     Id = x.Id,
                     Content = x.Content,
@@ -111,7 +112,7 @@ namespace API.Hubs
                     UserName = userName!,
                     ProfilePicture = currentUser?.ImageProfile!
                 };
-                _onlineUsers.TryAdd(userName!, user);
+                _onlineUsers.TryAdd(userName!, user); 
 
                 await Clients.AllExcept(connectionId!).Notify(currentUser!);
             }

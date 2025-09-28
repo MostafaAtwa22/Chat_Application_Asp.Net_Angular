@@ -6,6 +6,7 @@ using API.Response;
 using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.EndPoints
 {
@@ -108,25 +109,14 @@ namespace API.EndPoints
                 return Results.Ok(Response<string>.Success(token, "Login done successfully"));
             });
 
-            group.MapPost("/me", async (HttpContext httpContext,
-                [FromServices] UserManager<ApplicationUser> userManager) =>
+            group.MapGet("/me", async (HttpContext httpContext,
+                UserManager<ApplicationUser> userManager) =>
             {
-                // Check if user is authenticated first
-                if (!httpContext.User.Identity.IsAuthenticated)
-                {
-                    return Results.Unauthorized();
-                }
-
                 var currentLoggedInUserId = httpContext.User.GetUserId();
-                
-                // Check if user ID is available (remove .ToString() since it should already be string)
-                if (string.IsNullOrEmpty(currentLoggedInUserId))
-                {
-                    return Results.Unauthorized();
-                }
 
-                // Get the user from the database
-                var user = await userManager.FindByIdAsync(currentLoggedInUserId);
+                var user = await userManager.Users
+                    .SingleOrDefaultAsync(x => x.Id == currentLoggedInUserId.ToString());
+
                 if (user == null)
                 {
                     return Results.NotFound("User not found");
@@ -134,6 +124,7 @@ namespace API.EndPoints
 
                 return Results.Ok(Response<ApplicationUser>.Success(user, "User fetched successfully."));
             }).RequireAuthorization();
+
             return group;
         }
     }
