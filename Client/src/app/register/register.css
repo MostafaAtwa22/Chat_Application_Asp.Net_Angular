@@ -1,0 +1,267 @@
+/* Modern Registration Form Styles */
+.modern-registration-form {
+  max-width: 480px;
+  margin: 2rem auto;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+.form-container {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-header h2 {
+  color: #1a1a1a;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Profile Upload Section */
+.profile-upload-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.profile-image-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile-image-wrapper:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.profile-image-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 3px solid white;
+  position: relative;
+}
+
+/* Image preview styling */
+.profile-image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-image-placeholder .material-icons {
+  font-size: 3rem;
+  color: #9ca3af;
+}
+
+.profile-image-input {
+  display: none;
+}
+
+.upload-overlay {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  z-index: 2;
+}
+
+.upload-overlay:hover {
+  transform: scale(1.1);
+}
+
+.upload-overlay .material-icons {
+  font-size: 1.2rem;
+}
+
+.upload-text {
+  display: none;
+}
+
+/* Form Fields */
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modern-field {
+  width: 100%;
+}
+
+/* Angular Material overrides */
+::ng-deep .modern-field .mat-form-field-flex {
+  background: #f8fafc !important;
+  border-radius: 12px !important;
+  padding: 0.5em 0.75em 0.5em 0.75em !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .modern-field .mat-form-field-outline {
+  border-radius: 12px !important;
+}
+
+::ng-deep .modern-field.mat-form-field-appearance-fill .mat-form-field-flex {
+  background: #f8fafc !important;
+  border-radius: 12px !important;
+}
+
+::ng-deep .modern-field.mat-form-field-appearance-fill.mat-focused .mat-form-field-flex {
+  background: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+}
+
+::ng-deep .modern-field .mat-form-field-label {
+  color: #6b7280 !important;
+  font-weight: 500 !important;
+}
+
+::ng-deep .modern-field .mat-input-element {
+  color: #1a1a1a !important;
+  font-weight: 500 !important;
+}
+
+::ng-deep .modern-field .mat-form-field-infix {
+  padding: 0.5em 0 !important;
+}
+
+::ng-deep .modern-field .mat-form-field-suffix {
+  color: #9ca3af !important;
+}
+
+/* Submit Button */
+.submit-button {
+  width: 100%;
+  height: 56px;
+  border-radius: 14px !important;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+}
+
+.submit-button:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+}
+
+.submit-button:active:not([disabled]) {
+  transform: translateY(0);
+}
+
+.button-disabled {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.button-text {
+  font-weight: 600;
+}
+
+.button-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.submit-button:hover:not([disabled]) .button-icon {
+  transform: translateX(4px);
+}
+
+/* Form Footer */
+.form-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.form-footer p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.login-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.login-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .modern-registration-form {
+    margin: 1rem;
+  }
+
+  .form-container {
+    padding: 1.5rem;
+  }
+
+  .profile-image-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+}

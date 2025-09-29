@@ -1,1 +1,89 @@
-<p>register works!</p>
+<form class="modern-registration-form" (ngSubmit)="onSubmit()">
+  <div class="form-container">
+    <!-- Header -->
+    <div class="form-header">
+      <h2>Create Your Account</h2>
+      <p class="subtitle">Join our community today</p>
+    </div>
+
+    <!-- Profile Picture Upload -->
+    <div class="profile-upload-section">
+      <div class="profile-image-wrapper">
+        <div class="profile-image-placeholder">
+          <!-- Show preview if selected -->
+          <img *ngIf="imagePreview; else defaultIcon" [src]="imagePreview" alt="Preview">
+          <ng-template #defaultIcon>
+            <span class="material-icons">person</span>
+          </ng-template>
+        </div>
+        <input
+          type="file"
+          id="profileImage"
+          class="profile-image-input"
+          (change)="onFileSelected($event)"
+          accept="image/*"
+        >
+        <label for="profileImage" class="upload-overlay">
+          <span class="material-icons">photo_camera</span>
+          <span class="upload-text">Add Photo</span>
+        </label>
+      </div>
+    </div>
+
+
+    <!-- Form Fields -->
+    <div class="form-fields">
+      <mat-form-field appearance="fill" class="modern-field">
+        <mat-label>Full Name</mat-label>
+        <input matInput placeholder="John Doe" [formControl]="fullNameControl">
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-error *ngIf="fullNameControl.hasError('required')">Full name is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="modern-field">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" placeholder="example@mail.com" [formControl]="emailFormControl">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+          Please enter a valid email
+        </mat-error>
+        <mat-error *ngIf="emailFormControl.hasError('required')">Email is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="modern-field">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" placeholder="••••••••" [formControl]="passwordControl">
+        <mat-icon matSuffix>lock</mat-icon>
+        <mat-error *ngIf="passwordControl.hasError('required')">Password is required</mat-error>
+        <mat-error *ngIf="passwordControl.hasError('minlength')">Minimum 6 characters</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="modern-field">
+        <mat-label>Confirm Password</mat-label>
+        <input matInput type="password" placeholder="••••••••" [formControl]="confirmPasswordControl">
+        <mat-icon matSuffix>lock_reset</mat-icon>
+        <mat-error *ngIf="confirmPasswordControl.hasError('required')">Confirm password</mat-error>
+        <mat-error *ngIf="passwordMismatch">Passwords do not match</mat-error>
+      </mat-form-field>
+
+      <!-- Submit Button -->
+      <button
+        mat-raised-button
+        class="submit-button"
+        type="submit"
+        [disabled]="!formValid"
+        [class.button-disabled]="!formValid"
+      >
+        <span class="button-content">
+          <span class="button-text">Create Account</span>
+          <span class="material-icons button-icon">arrow_forward</span>
+        </span>
+      </button>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <p>Already have an account? <a href="#" class="login-link">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+</form>
