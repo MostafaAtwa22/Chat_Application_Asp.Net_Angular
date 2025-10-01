@@ -20,4 +20,18 @@ export class AuthService {
         })
       );
   }
+
+  login(data: { email: string; password: string }): Observable<ApiResponse<string>> {
+    return this._httpClient.post<ApiResponse<string>>(
+      `${this.url}/login`,
+      data, 
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(
+      tap((response) => {
+        if (response?.data) {
+          localStorage.setItem("token", response.data);
+        }
+      })
+    );
+  }
 }
