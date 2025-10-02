@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../Models/ApiResponse';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -23,7 +23,8 @@ import { Router } from '@angular/router';
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    RouterModule
   ]
 })
 export class Register {
@@ -52,7 +53,11 @@ export class Register {
           ]
         ],
         fullName: ['', [Validators.required, Validators.minLength(3)]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
+        password: ['', [
+          Validators.required,
+          Validators.minLength(8), // match your regex min length
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        ]],
         confirmPassword: ['', Validators.required]
       },
       { validators: this.passwordsMatchValidator } // ✅ custom validator
@@ -97,7 +102,7 @@ export class Register {
     const { email, userName, fullName, password, confirmPassword } = this.registerForm.value;
 
     const formData = new FormData();
-    formData.append("Email", email);           
+    formData.append("Email", email);
     formData.append("UserName", userName);
     formData.append("FullName", fullName);
     formData.append("Password", password);
@@ -109,6 +114,7 @@ export class Register {
 
     this._authService.register(formData).subscribe({
       next: (response) => {
+        this._authService.me().subscribe();
         this._snakBar.open("Registration successful!", 'Close');
         console.log("Registration successful:", response);
       },
@@ -118,7 +124,7 @@ export class Register {
         console.error("Registration failed:", err);
       },
       complete: () => {
-        this._router.navigate(['/'])
+        this._router.navigate(['/chat']);
       }
     });
   }

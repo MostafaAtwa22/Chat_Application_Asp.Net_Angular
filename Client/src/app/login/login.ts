@@ -4,7 +4,7 @@ import { ApiResponse } from '../Models/ApiResponse';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -19,8 +19,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconModule
-  ],
+    MatIconModule,
+    RouterLink
+],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -41,7 +42,7 @@ export class Login {
     this.loginForm = this.fb.group(
       {
         email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
+        password: ['', [Validators.required, Validators.minLength(8)]],
       }
     );
   }
@@ -64,14 +65,18 @@ export class Login {
 
     this._authService.login({ email, password }).subscribe({
       next: (response) => {
+        this._authService.me().subscribe();
         this._snakBar.open("Login successful!", 'Close');
         console.log("Login successful:", response);
-        this._router.navigate(['/']);
+
       },
       error: (err: HttpErrorResponse) => {
         const error = err.error as ApiResponse<string>;
         this._snakBar.open(error?.error || "Login failed", 'Close');
         console.error("Login failed:", err);
+      },
+      complete:() => {
+        this._router.navigate(['/chat']);
       }
     });
   }

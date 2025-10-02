@@ -1,15 +1,15 @@
-<div class="p-4 rounded shadow-sm bg-white w-100 position-relative mx-auto my-4" style="z-index: 2;">
-  <div class="row w-100">
+<div class="w-100 h-100 position-relative mx-auto overflow-hidden" style="z-index: 2; height: 100vh;">
+  <div class="row w-100 h-100 m-0">
 
     <!-- Left side (Image) -->
-    <div class="col-lg-7 d-flex justify-content-center align-items-center bg-white d-none d-lg-block z-3">
+    <div class="col-lg-7 d-flex justify-content-center align-items-center bg-white d-none d-lg-flex z-3">
       <img src="register.png" alt="Register illustration"
-           class="img-fluid" style="max-height: 500px;">
+           class="img-fluid" style="max-height: 80vh;">
     </div>
 
     <!-- Right side (Register card with animated background) -->
-    <div class="col-lg-5 d-flex justify-content-center align-items-center position-relative">
-      <div class="p-4 rounded shadow-sm bg-white w-75 position-relative" style="z-index: 2;">
+  <div class="col-lg-5 d-flex justify-content-center align-items-center position-relative">
+    <div class="p-4 rounded shadow-sm bg-white w-75 position-relative overflow-auto" style="z-index: 2; max-height: 90vh;">
 
         <!-- Profile picture -->
         <div class="d-flex justify-content-center mb-3">
@@ -68,7 +68,7 @@
             </mat-icon>
             <mat-error *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
               <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</span>
-              <span *ngIf="registerForm.get('password')?.errors?.['minlength']">At least 6 characters</span>
+              <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must contain at least one uppercase, one lowercase, one number, and one special character</span>
             </mat-error>
           </mat-form-field>
 
@@ -100,6 +100,11 @@
                   [disabled]="registerForm.invalid">
             Register
           </button>
+
+          <div class="text-center w-100 mt-4">
+            Do you have an account? <a routerLink="/login"
+            style="text-decoration: none;" class="text-info">Login</a>
+          </div>
         </form>
       </div>
     </div>
