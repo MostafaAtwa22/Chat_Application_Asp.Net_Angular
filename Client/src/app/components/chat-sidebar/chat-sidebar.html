@@ -1,0 +1,35 @@
+<div class="p-2 bg-white position-sticky top-0 w-100 z-3 shadow-sm">
+
+  <!-- Top row: Profile + Menu -->
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <!-- Left: Profile -->
+    <div class="d-flex align-items-center gap-2">
+      <img class="rounded-circle object-fit-cover"
+           src="https://randomuser.me/api/portraits/men/59.jpg"
+           alt="Profile Picture">
+      <span class="fw-bold">John Doe</span>
+    </div>
+
+    <!-- Right: Menu -->
+    <div>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <!-- Bottom row: Search -->
+  <div class="d-flex align-items-center">
+    <input type="text"
+           placeholder="Search..."
+           class="form-control rounded-pill px-3 py-2"
+           style="background-color: whitesmoke; border: none; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+  </div>
+
+</div>
