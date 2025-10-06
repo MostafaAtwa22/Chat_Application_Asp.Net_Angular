@@ -1,11 +1,43 @@
-<!-- <div class="position-relative w-100 h-100">
-  <div class="chat-header d-flex justify-content-between align-items-center border-black w-100 bg-white p-4">
-    <div>
-      <span class="lead"></span>
+@if (_chatService.currentOpenChat()) {
+  <div class="position-relative h-100">
+    <!-- Chat Header -->
+    <div class="chat-header d-flex justify-content-between align-items-center w-100 bg-white shadow-sm px-4 py-3 border-bottom">
+      <!-- User Info -->
+      <div class="d-flex align-items-center gap-3">
+        <img
+          [src]="_chatService.currentOpenChat()?.profilePicture || 'https://randomuser.me/api/portraits/lego/5.jpg'"
+          alt="User Profile Picture"
+          class="rounded-circle border border-2 border-light shadow-sm"
+          style="width: 50px; height: 50px; object-fit: cover;"
+        >
+        <div class="d-flex flex-column">
+          <span class="fw-semibold text-dark fs-5">
+            {{ _chatService.currentOpenChat()?.fullName | titlecase }}
+          </span>
+          <span class="text-muted small">
+            {{ _chatService.status(_chatService.currentOpenChat()?.userName!) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex align-items-center gap-3">
+        <mat-icon class="cursor-pointer text-secondary hover-effect" title="Start Video Call">
+          video_call
+        </mat-icon>
+        <mat-icon class="cursor-pointer text-secondary hover-effect" title="View Info">
+          info
+        </mat-icon>
+      </div>
     </div>
   </div>
-</div> -->
-
-<div class="d-flex flex-column align-items-center justify-content-center h-100">
-  <img src="openchat.png" alt="OpenChat Logo" class="img-fluid" style="max-width: 300px;  height: auto;">
-</div>
+} @else {
+  <!-- Placeholder when no chat is selected -->
+  <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center p-4">
+    <img src="openchat.png" alt="Open Chat Illustration" class="img-fluid mb-4" style="max-width: 280px; height: auto;">
+    <h5 class="fw-semibold text-dark">No Chat Selected</h5>
+    <p class="text-muted small mb-0">
+      Choose a contact from the sidebar to start a conversation.
+    </p>
+  </div>
+}

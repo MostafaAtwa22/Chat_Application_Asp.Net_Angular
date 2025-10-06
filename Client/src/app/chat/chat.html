@@ -1,7 +1,14 @@
-<div class="d-flex rounded h-100 justify-content-between">
-  <app-chat-sidebar class="bg-white border w-50"></app-chat-sidebar>
-  <div class="w-100">
+<div class="d-flex rounded h-100 justify-content-between bg-light">
+  <!-- Left Sidebar -->
+  <app-chat-sidebar class="bg-white border-end shadow-sm" style="width: 25%;"></app-chat-sidebar>
+
+  <!-- Chat Window -->
+  <div class="flex-grow-1 bg-white">
     <app-chat-window></app-chat-window>
   </div>
-  <div style="background-color: #eeeeee4b; border-left: 1px solid rgba(0, 0, 0, 0.219);" class="w-50"></div>
+
+  <!-- Right Sidebar -->
+  <div class="chat-right-sidebar bg-white border-start shadow-sm p-3" style="width: 25%;">
+    <app-chat-right-sidebar></app-chat-right-sidebar>
+  </div>
 </div>

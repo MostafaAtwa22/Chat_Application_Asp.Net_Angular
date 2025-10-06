@@ -1,0 +1,36 @@
+.profile-right-card {
+  background: #ffffff;
+  width: 100%;
+}
+.profile-image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.online-indicator {
+  width: 18px;
+  height: 18px;
+  bottom: 5px;
+  right: 12px;
+  position: absolute;
+  transform: translate(50%, 50%);
+  box-shadow: 0 0 0 2px #fff; /* white border ring for clarity */
+}
+
+
+.profile-image:hover {
+  transform: scale(1.03);
+}
+
+.about-section {
+  max-width: 85%;
+  line-height: 1.6;
+}
+

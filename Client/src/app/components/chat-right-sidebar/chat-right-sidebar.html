@@ -1,0 +1,55 @@
+@if (_chatService.currentOpenChat()) {
+  <div class="p-4 text-center d-flex flex-column align-items-center justify-content-start h-100 profile-right-card">
+
+    <!-- Profile Picture -->
+    <div class="position-relative mb-3 profile-image-wrapper">
+      <img
+        [src]="_chatService.currentOpenChat()?.profilePicture || 'https://randomuser.me/api/portraits/lego/5.jpg'"
+        alt="User Profile Picture"
+        class="rounded-circle border border-3 border-white shadow-lg profile-image"
+      >
+      <span
+        class="position-absolute translate-middle p-2 border border-light rounded-circle bg-warning shadow-sm"
+        style="width: 18px; height: 18px; bottom: 0px; right: 5px;"
+        title="Online"
+      ></span>
+    </div>
+
+    <!-- User Info -->
+    <div class="mb-3">
+      <h5 class="fw-bold text-dark mb-1">
+        {{ _chatService.currentOpenChat()?.fullName | titlecase }}
+      </h5>
+      <p class="text-muted small mb-0">
+        @{{ _chatService.currentOpenChat()?.userName }}
+      </p>
+    </div>
+
+    <!-- Divider -->
+    <hr class="w-75 my-3 opacity-25">
+
+    <!-- About Section -->
+    <div class="text-start mt-2 px-3 about-section">
+      <h6 class="fw-semibold text-secondary mb-2">About this chat</h6>
+      <p class="text-muted small mb-0 lh-base">
+        You’re now connected with
+        <span class="fw-semibold text-dark">{{ _chatService.currentOpenChat()?.fullName | titlecase }}</span>.
+        Feel free to start your conversation — messages here are private and end-to-end encrypted.
+      </p>
+    </div>
+
+  </div>
+} @else {
+  <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 p-4">
+    <img
+      src="chat-user.png"
+      alt="Start Chat Illustration"
+      style="width: 180px; height: auto; opacity: 0.8;"
+      class="mb-3"
+    >
+    <h5 class="fw-semibold text-dark mb-2">Select a chat to start messaging</h5>
+    <p class="text-muted small mb-0">
+      Choose a conversation from the left sidebar to begin.
+    </p>
+  </div>
+}

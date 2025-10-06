@@ -1,3 +1,12 @@
-span {
-  font-weight: bold;
+.chat-header {
+  border-radius: 8px 8px 0 0;
+}
+
+.hover-effect:hover {
+  color: #0d6efd; /* Bootstrap primary blue */
+  transition: color 0.2s ease-in-out;
+}
+
+.text-muted {
+  color: #6c757d !important;
 }
