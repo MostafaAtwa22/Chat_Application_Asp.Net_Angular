@@ -1,41 +1,67 @@
 @if (_chatService.currentOpenChat()) {
-  <div class="position-relative h-100">
+  <div class="position-relative d-flex flex-column h-100 w-100 bg-white rounded-3 shadow-sm overflow-hidden">
+
     <!-- Chat Header -->
-    <div class="chat-header d-flex justify-content-between align-items-center w-100 bg-white shadow-sm px-4 py-3 border-bottom">
+    <div class="chat-header d-flex justify-content-between align-items-center w-100 bg-white px-4 py-3 border-bottom">
       <!-- User Info -->
       <div class="d-flex align-items-center gap-3">
         <img
           [src]="_chatService.currentOpenChat()?.profilePicture || 'https://randomuser.me/api/portraits/lego/5.jpg'"
           alt="User Profile Picture"
-          class="rounded-circle border border-2 border-light shadow-sm"
+          class="rounded-circle border border-2 shadow-sm"
           style="width: 50px; height: 50px; object-fit: cover;"
         >
-        <div class="d-flex flex-column">
-          <span class="fw-semibold text-dark fs-5">
+        <div>
+          <h6 class="fw-semibold mb-0 text-dark">
             {{ _chatService.currentOpenChat()?.fullName | titlecase }}
-          </span>
-          <span class="text-muted small">
+          </h6>
+          <small class="text-muted">
             {{ _chatService.status(_chatService.currentOpenChat()?.userName!) }}
-          </span>
+          </small>
         </div>
       </div>
 
-      <!-- Actions -->
+      <!-- Header Actions -->
       <div class="d-flex align-items-center gap-3">
-        <mat-icon class="cursor-pointer text-secondary hover-effect" title="Start Video Call">
-          video_call
-        </mat-icon>
-        <mat-icon class="cursor-pointer text-secondary hover-effect" title="View Info">
-          info
-        </mat-icon>
+        <mat-icon class="cursor-pointer text-secondary hover-scale" title="Start Video Call">videocam</mat-icon>
+        <mat-icon class="cursor-pointer text-secondary hover-scale" title="View Info">info</mat-icon>
       </div>
     </div>
+
+    <!-- Chat Body -->
+    <div class="flex-grow-1 overflow-hidden d-flex flex-column bg-light">
+      <!-- Scrollable chat messages area -->
+      <div class="flex-grow-1 overflow-auto px-3 py-2" style="scrollbar-width: thin;">
+        <app-chat-box></app-chat-box>
+      </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input border-top bg-white px-4 py-3">
+      <div class="d-flex align-items-center gap-3">
+        <input
+          type="text"
+          [(ngModel)]="message"
+          class="form-control rounded-pill px-4 py-2 border-0 shadow-sm"
+          placeholder="Type your message..."
+          (keyup.enter)="sendMessage()"
+        >
+        <button
+          class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+          style="width: 42px; height: 42px;"
+          (click)="sendMessage()"
+        >
+          <mat-icon class="text-white">send</mat-icon>
+        </button>
+      </div>
+    </div>
+
   </div>
 } @else {
   <!-- Placeholder when no chat is selected -->
-  <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center p-4">
+  <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center p-4 bg-light rounded-3 shadow-sm">
     <img src="openchat.png" alt="Open Chat Illustration" class="img-fluid mb-4" style="max-width: 280px; height: auto;">
-    <h5 class="fw-semibold text-dark">No Chat Selected</h5>
+    <h5 class="fw-semibold text-dark mb-1">No Chat Selected</h5>
     <p class="text-muted small mb-0">
       Choose a contact from the sidebar to start a conversation.
     </p>

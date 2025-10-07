@@ -1,0 +1,85 @@
+<div
+  class="d-flex chat-box flex-column py-2 border-0 h-100 overflow-auto bg-light rounded-3 shadow-sm"
+>
+  <!-- Load More Button -->
+  @if (_chatService.chatMessages().length > 5) {
+  <div class="text-center py-2 sticky-top bg-light">
+    <button
+      class="text-secondary small shadow-sm px-4 py-2 rounded bg-white border border-light hover:bg-body-tertiary"
+    >
+      @if (_chatService.isLoading()) {
+      <div class="d-flex align-items-center justify-content-center gap-2">
+        <mat-spinner diameter="18" strokeWidth="3"></mat-spinner>
+        <span>Loading...</span>
+      </div>
+      } @else { Load more }
+    </button>
+  </div>
+  }
+
+  <!-- Chat Messages -->
+  @for (item of _chatService.chatMessages(); track item.id) { @if (item.senderId !==
+  _authService.currentUser?.id) {
+  <!-- Received Message -->
+  <div class="d-flex mb-4 flex-row align-items-end">
+    <div class="d-flex align-items-center justify-content-center me-2">
+      <img
+        [src]="
+          _chatService.currentOpenChat()?.profilePicture ||
+          'https://randomuser.me/api/portraits/lego/5.jpg'
+        "
+        [alt]="_chatService.currentOpenChat()?.fullName"
+        class="rounded-circle border shadow-sm"
+        style="width: 40px; height: 40px; object-fit: cover"
+      />
+    </div>
+    <div class="chat-message bg-white p-3 rounded shadow-sm">
+      <span class="text-dark small d-block">{{ item.content }}</span>
+      <span class="text-muted text-end d-block mt-1" style="font-size: 0.75rem">
+        {{ item.sendingTime | date : 'shortTime' }}
+      </span>
+    </div>
+  </div>
+  } @else {
+  <!-- Sent Message -->
+  <div class="d-flex justify-content-end mb-4 align-items-end">
+    <div
+      class="chat-message bg-primary text-white p-3 rounded shadow-sm me-2"
+      style="max-width: 70%"
+    >
+      <span class="small d-block">{{ item.content }}</span>
+      <span class="text-light text-end d-block mt-1" style="font-size: 0.75rem">
+        {{ item.sendingTime | date : 'shortTime' }}
+      </span>
+    </div>
+    <div class="d-flex align-items-center justify-content-center">
+      <img
+        [src]="
+          _authService.currentUser?.profilePicture ||
+          'https://randomuser.me/api/portraits/lego/1.jpg'
+        "
+        [alt]="_authService.currentUser?.fullName"
+        class="rounded-circle border shadow-sm"
+        style="width: 40px; height: 40px; object-fit: cover"
+      />
+    </div>
+  </div>
+  } } @empty {
+  <!-- No Messages -->
+  <div class="d-flex flex-column align-items-center justify-content-center text-muted h-100">
+    @if (_chatService.isLoading()) {
+    <mat-spinner diameter="40" strokeWidth="3"></mat-spinner>
+    } @else {
+    <div
+      class="d-flex flex-column align-items-center justify-content-center text-center py-5 text-muted"
+    >
+      <mat-icon class="text-secondary mb-2">chat</mat-icon>
+      <h6 class="fw-semibold mb-2 text-dark">No Messages Yet</h6>
+      <p class="small mb-0 text-secondary">
+        Start the conversation by sending a message below — it's quiet here for now 💬
+      </p>
+    </div>
+    }
+  </div>
+  }
+</div>
