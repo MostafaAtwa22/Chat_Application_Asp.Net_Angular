@@ -1,0 +1,39 @@
+.chat-box {
+  scroll-behavior: smooth;
+  overflow: hidden;
+  padding: 10px;
+  background-color: #f5f5f5;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: 70vh;
+  border-radius: 5px;
+  overflow-y: scroll;
+}
+
+.chat-box::-webkit-scrollbar {
+  width: 5px;
+  transition:  width 0.3s;
+}
+
+.chat-box:hover::-webkit-scrollbar {
+  width: 8px
+}
+
+.chat-box::-webkit-scrollbar-track {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.chat-box:hover::-webkit-scrollbar-thumb {
+  background-color: #555;
+}
+
+.chat-icon { 
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+}

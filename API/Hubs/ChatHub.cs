@@ -24,63 +24,140 @@ namespace API.Hubs
             _userManager = userManager;
             _context = context;
         }
-
         public async Task SendMessage(MessageRequestDto message)
         {
-            var senderId = Context.User!.Identity!.Name;
-            var receivedId = message.ReceiverId;
-
-            var newMessage = new Message
+            try
             {
-                Sender = await _userManager.FindByNameAsync(senderId),
-                Receiver = await _userManager.FindByNameAsync(receivedId),
-                IsReaded = false,
-                SendingTime = DateTime.UtcNow,
-                Content = message.Content
-            };
+                var senderUserName = Context.User!.Identity!.Name;
+                var receiverId = message.ReceiverId;
 
-            await _context.Messages.AddAsync(newMessage);
-            await _context.SaveChangesAsync();
+                // Validate input
+                if (string.IsNullOrEmpty(receiverId))
+                {
+                    throw new HubException("Receiver ID cannot be null or empty");
+                }
 
-            await Clients.User(receivedId).ReceiveNewMessage(newMessage);
+                if (string.IsNullOrEmpty(message.Content))
+                {
+                    throw new HubException("Message content cannot be null or empty");
+                }
+
+                // Get sender by username
+                var sender = await _userManager.FindByNameAsync(senderUserName);
+                if (sender == null)
+                {
+                    throw new HubException("Sender not found");
+                }
+
+                // Verify receiver exists
+                var receiver = await _userManager.FindByIdAsync(receiverId);
+                if (receiver == null)
+                {
+                    throw new HubException($"Receiver with ID '{receiverId}' not found");
+                }
+
+                var newMessage = new Message
+                {
+                    SenderId = sender.Id,
+                    ReceiverId = receiverId,
+                    IsReaded = false,
+                    SendingTime = DateTime.UtcNow,
+                    Content = message.Content
+                };
+
+                await _context.Messages.AddAsync(newMessage);
+                await _context.SaveChangesAsync();
+
+                await Clients.User(receiverId).ReceiveNewMessage(newMessage);
+            }
+            catch (HubException)
+            {
+                // Re-throw HubExceptions as they are expected
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Log unexpected exceptions and throw a generic HubException
+                Console.WriteLine($"Error in SendMessage: {ex.Message}");
+                throw new HubException("An error occurred while sending the message");
+            }
         }
 
         public async Task LoadMessages(string receivedId, int pageNumber = 1)
         {
-            int pageSize = 10;
-            var userName = Context!.User!.Identity!.Name;
-
-            var currentUser = await _userManager.FindByNameAsync(userName!);
-            if (currentUser is null)
-                return;
-
-            List<MessageReponseDto> messages = await _context.Messages
-                .Where(x => x.ReceiverId == currentUser!.Id && x.SenderId == receivedId
-                || x.ReceiverId == receivedId && x.SenderId == currentUser!.Id)
-                .OrderByDescending(x => x.SendingTime)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .OrderBy(x => x.SendingTime)
-                .Select(x => new MessageReponseDto
-                {
-                    Id = x.Id,
-                    Content = x.Content,
-                    SendingTime = x.SendingTime,
-                    ReceiverId = x.ReceiverId,
-                    SenderId = x.SenderId
-                }).ToListAsync();
-
-            foreach (var message in messages)
+            try
             {
-                var msg = await _context.Messages.FirstOrDefaultAsync(x => x.Id == message.Id);
-                if (msg is not null && msg.ReceiverId == currentUser.Id)
-                {
-                    msg.IsReaded = true;
-                    await _context.SaveChangesAsync();
-                }
-            }
+                int pageSize = 10;
+                var userName = Context!.User!.Identity!.Name;
 
-            await Clients.User(currentUser.Id).ReceiveMessageList(messages);
+                // Validate input
+                if (string.IsNullOrEmpty(receivedId))
+                {
+                    throw new HubException("Received user ID cannot be null or empty");
+                }
+
+                var currentUser = await _userManager.FindByNameAsync(userName!);
+                if (currentUser is null)
+                {
+                    throw new HubException("Current user not found");
+                }
+
+                // Verify the other user exists
+                var otherUser = await _userManager.FindByIdAsync(receivedId);
+                if (otherUser == null)
+                {
+                    throw new HubException($"User with ID '{receivedId}' not found");
+                }
+
+                // Load messages between current user and the specified user
+                List<MessageReponseDto> messages = await _context.Messages
+                    .Where(x => (x.ReceiverId == currentUser.Id && x.SenderId == receivedId) ||
+                               (x.ReceiverId == receivedId && x.SenderId == currentUser.Id))
+                    .OrderByDescending(x => x.SendingTime)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .OrderBy(x => x.SendingTime)
+                    .Select(x => new MessageReponseDto
+                    {
+                        Id = x.Id,
+                        Content = x.Content,
+                        SendingTime = x.SendingTime,
+                        ReceiverId = x.ReceiverId,
+                        SenderId = x.SenderId
+                    }).ToListAsync();
+
+                // Mark messages as read (only messages received by current user)
+                var messageIds = messages.Where(m => m.ReceiverId == currentUser.Id).Select(m => m.Id).ToList();
+                if (messageIds.Any())
+                {
+                    var messagesToUpdate = await _context.Messages
+                        .Where(m => messageIds.Contains(m.Id) && !m.IsReaded)
+                        .ToListAsync();
+
+                    foreach (var msg in messagesToUpdate)
+                    {
+                        msg.IsReaded = true;
+                    }
+
+                    if (messagesToUpdate.Any())
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                await Clients.User(currentUser.Id).ReceiveMessageList(messages);
+            }
+            catch (HubException)
+            {
+                // Re-throw HubExceptions as they are expected
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Log unexpected exceptions and throw a generic HubException
+                Console.WriteLine($"Error in LoadMessages: {ex.Message}");
+                throw new HubException("An error occurred while loading messages");
+            }
         }
 
         public async Task NotifyTyping(string receiverUserName)

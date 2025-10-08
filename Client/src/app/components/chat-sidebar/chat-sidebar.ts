@@ -23,9 +23,13 @@ export class ChatSidebar implements OnInit {
   private _router = inject(Router);
   private _chatService = inject(ChatService);
 
-  ngOnInit(): void {
-    this._chatService.startConnection(this._authService.getAccessToken!);
-    this.currentUser = this._authService.currentUser;
+  async ngOnInit(): Promise<void> {
+    try {
+      await this._chatService.startConnection(this._authService.getAccessToken!);
+      this.currentUser = this._authService.currentUser;
+    } catch (err) {
+      console.error('Failed to start chat connection:', err);
+    }
   }
 
   logout() {

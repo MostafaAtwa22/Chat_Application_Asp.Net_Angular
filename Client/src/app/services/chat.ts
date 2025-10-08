@@ -18,7 +18,7 @@ export class ChatService {
   currentOpenChat = signal<User | null>(null);
   private hubConnection!: HubConnection;
 
-  startConnection(token: string, senderId?: string) {
+  async startConnection(token: string, senderId?: string) {
     // config the connection
     this.hubConnection = new HubConnectionBuilder()
     .withUrl(`${this.hubUrl}?senderId=${senderId || ''}`, {
@@ -32,7 +32,7 @@ export class ChatService {
       .catch((err) => console.log(`Faild connection: ${err}`));
 
     // subscribe the onlineusers
-    this.hubConnection!.on('OnlineUsers', (users: User[]) => {
+    this.hubConnection.on('OnlineUsers', (users: User[]) => {
       console.log(users);
       this.onlineUsers.update(() =>
         users.filter(
@@ -41,12 +41,17 @@ export class ChatService {
       );
     });
 
-    // appened to the body message
-    this.hubConnection!.invoke('ReceiveMessageList', (message: Message) => {
+    // subscribe to receive message list
+    this.hubConnection.on('ReceiveMessageList', (message: Message) => {
       this.chatMessages.update(messages => [...messages, message]);
       this.isLoading.update(_ => false);
     });
 
+    this.hubConnection.on('ReceiveNewMessage', (message: Message) => {
+      document.title = '(1) New message';
+
+      this.chatMessages.update((messages) => [...messages, message]);
+    });
   }
 
   disConnectConnection() {
@@ -54,6 +59,35 @@ export class ChatService {
       this.hubConnection.stop()
       .then(() => console.log('Connection Ended'))
       .catch((err) => console.log(err));
+  }
+
+  async sendMessage(message: string) {
+    if (this.hubConnection?.state !== HubConnectionState.Connected) {
+      console.error('Cannot send message: connection not established');
+      return;
+    }
+
+    this.chatMessages.update((messages) => [
+      ...messages,
+      {
+        content: message,
+        senderId: this._authService.currentUser!.userId,
+        receiverId: this.currentOpenChat()?.userId!,
+        sendingTime: new Date().toString(),
+        isReaded: false,
+        id: 0
+      }
+    ])
+    
+    try {
+      const id = await this.hubConnection.invoke('SendMessage', {
+      receiverId: this.currentOpenChat()?.userId,
+      content: message
+      });
+      console.log(`Send to : ${id}`);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   status (userName: string) : string {
@@ -71,12 +105,36 @@ export class ChatService {
     return onlineUser?.isOnline ? 'Online' : this.currentOpenChat()!.userName;
   }
 
-  LoadMessages(pageNumber: number) {
-    this.hubConnection?.invoke('LoadMessages', this.currentOpenChat()?.id, pageNumber)
-    .then(_ => console.log('Load the messages !!'))
-    .catch(err => console.log(err))
-    .finally(() => {
-      this.isLoading.update(_ => false)
-    })
+  async LoadMessages(pageNumber: number) {
+    if (this.hubConnection?.state !== HubConnectionState.Connected) {
+      console.error('Cannot load messages: connection not established');
+      this.isLoading.update(_ => false);
+      return;
+    }
+
+    const currentChat = this.currentOpenChat();
+    const receiverId = currentChat?.userId;
+    
+    console.log('LoadMessages called with:', {
+      pageNumber,
+      currentChat,
+      receiverId,
+      currentChatUser: currentChat?.userName
+    });
+
+    if (!receiverId) {
+      console.error('Cannot load messages: no chat user selected or user ID is missing');
+      this.isLoading.update(_ => false);
+      return;
+    }
+    
+    try {
+      await this.hubConnection.invoke('LoadMessages', receiverId, pageNumber);
+      console.log(`Successfully requested messages for user: ${currentChat?.userName} (ID: ${receiverId})`);
+    } catch (err) {
+      console.error('Error loading messages:', err);
+    } finally {
+      this.isLoading.update(_ => false);
+    }
   }
 }

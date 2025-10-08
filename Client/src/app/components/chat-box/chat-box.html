@@ -19,7 +19,7 @@
 
   <!-- Chat Messages -->
   @for (item of _chatService.chatMessages(); track item.id) { @if (item.senderId !==
-  _authService.currentUser?.id) {
+  _authService.currentUser?.userId) {
   <!-- Received Message -->
   <div class="d-flex mb-4 flex-row align-items-end">
     <div class="d-flex align-items-center justify-content-center me-2">
