@@ -14,17 +14,6 @@
   border-radius: 50%;
 }
 
-.online-indicator {
-  width: 18px;
-  height: 18px;
-  bottom: 5px;
-  right: 12px;
-  position: absolute;
-  transform: translate(50%, 50%);
-  box-shadow: 0 0 0 2px #fff; /* white border ring for clarity */
-}
-
-
 .profile-image:hover {
   transform: scale(1.03);
 }

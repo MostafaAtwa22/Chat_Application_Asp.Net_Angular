@@ -3,10 +3,157 @@
 }
 
 .hover-effect:hover {
-  color: #0d6efd; /* Bootstrap primary blue */
+  color: #0d6efd;
   transition: color 0.2s ease-in-out;
 }
 
 .text-muted {
   color: #6c757d !important;
+}
+
+.chat-textarea {
+  resize: none;
+  overflow-y: auto;
+  max-height: 120px;
+  border-radius: 20px !important;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  width: 100%;
+  min-height: 40px;
+  transition: height 0.15s ease;
+  background-color: #f8f9fa;
+}
+
+.chat-textarea:focus {
+  background-color: white;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25) !important;
+}
+
+.chat-input .d-flex {
+  align-items: flex-end;
+}
+
+/* Emoji Picker Styling */
+.emoji-picker-container {
+  position: absolute;
+  bottom: 70px;
+  left: 10px;
+  z-index: 1050;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+
+/* Remove title bar and improve search */
+::ng-deep .emoji-mart {
+  width: 352px !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+::ng-deep .emoji-mart-bar {
+  display: none !important;
+}
+
+::ng-deep .emoji-mart-search {
+  padding: 12px !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+::ng-deep .emoji-mart-search input {
+  border-radius: 8px !important;
+  border: 1px solid #e0e0e0 !important;
+  font-size: 14px !important;
+  padding: 10px 12px !important;
+  width: 100% !important;
+  background-color: #f8f9fa !important;
+  transition: all 0.2s ease !important;
+}
+
+::ng-deep .emoji-mart-search input:focus {
+  background-color: white !important;
+  border-color: #0d6efd !important;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1) !important;
+  outline: none !important;
+}
+
+::ng-deep .emoji-mart-search input::placeholder {
+  color: #6c757d !important;
+  opacity: 0.7 !important;
+}
+
+::ng-deep .emoji-mart-category .emoji-mart-emoji {
+  padding: 4px !important;
+  margin: 2px !important;
+}
+
+::ng-deep .emoji-mart-category-label {
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  background: #f8f9fa !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1 !important;
+  border-bottom: 1px solid #e9ecef !important;
+}
+
+::ng-deep .emoji-mart-category-label span {
+  background-color: transparent !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+::ng-deep .emoji-mart-scroll {
+  height: 280px !important;
+  overflow-y: auto !important;
+}
+
+::ng-deep .emoji-mart-emoji {
+  transition: all 0.1s ease;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+::ng-deep .emoji-mart-emoji:hover {
+  transform: scale(1.1);
+  background-color: #e9ecef !important;
+  border-radius: 6px !important;
+}
+
+/* Make emojis display more horizontally */
+::ng-deep .emoji-mart-category ul {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 2px !important;
+  padding: 4px 8px !important;
+}
+
+::ng-deep .emoji-mart-category li {
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+
+/* Custom scrollbar for emoji picker */
+::ng-deep .emoji-mart-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+::ng-deep .emoji-mart-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::ng-deep .emoji-mart-scroll::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::ng-deep .emoji-mart-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }

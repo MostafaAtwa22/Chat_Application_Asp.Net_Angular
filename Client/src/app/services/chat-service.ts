@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Inject, Injectable, signal } from '@angular/core';
 import { User } from '../Models/user';
 import { AuthService } from './auth-service';
 import { environment } from '../environments/environment';
@@ -10,12 +10,13 @@ import { Message } from '../Models/message';
 })
 export class ChatService {
   private hubUrl = `${environment.baseUrl}/hubs/chat`;
-  constructor(private _authService: AuthService) {}
+
   onlineUsers = signal<User[]>([]);
   chatMessages = signal<Message[]>([]);
   isLoading = signal<boolean>(true);
-
   currentOpenChat = signal<User | null>(null);
+  _authService = inject(AuthService)
+
   private hubConnection!: HubConnection;
 
   async startConnection(token: string, senderId?: string) {
@@ -23,7 +24,8 @@ export class ChatService {
     this.hubConnection = new HubConnectionBuilder()
     .withUrl(`${this.hubUrl}?senderId=${senderId || ''}`, {
       accessTokenFactory: () => token
-    }).withAutomaticReconnect()
+    })
+    .withAutomaticReconnect()
     .build();
 
     // start the connection
@@ -42,15 +44,25 @@ export class ChatService {
     });
 
     // subscribe to receive message list
-    this.hubConnection.on('ReceiveMessageList', (message: Message) => {
-      this.chatMessages.update(messages => [...messages, message]);
-      this.isLoading.update(_ => false);
+    this.hubConnection.on('ReceiveMessageList', (messages: Message[]) => {
+      // replace messages with the loaded page (since we cleared before loading)
+      this.chatMessages.set(messages);
+      this.isLoading.set(false);
     });
 
-    this.hubConnection.on('ReceiveNewMessage', (message: Message) => {
-      document.title = '(1) New message';
 
-      this.chatMessages.update((messages) => [...messages, message]);
+    this.hubConnection.on('ReceiveNewMessage', (message: Message) => {
+      const current = this.currentOpenChat();
+      if (current && (message.senderId === current.id || message.receiverId === current.id)) {
+        // belongs to currently open chat
+        this.chatMessages.update((messages) => [...messages, message]);
+        document.title = '(1) New message';
+      } else {
+        // belongs to another chat - فقط حدِّث قائمة غير المقروءة (الـ sidebar)
+        // ممكن تبعثلنا حدث لتحديث الـ online users unreadCount
+        // أو تطلُب تحديث الـ OnlineUsers من السيرفر لاحقًا
+        console.log('New message for other chat', message);
+      }
     });
   }
 
@@ -61,33 +73,27 @@ export class ChatService {
       .catch((err) => console.log(err));
   }
 
-  async sendMessage(message: string) {
-    if (this.hubConnection?.state !== HubConnectionState.Connected) {
-      console.error('Cannot send message: connection not established');
-      return;
-    }
-
+  sendMessage(message: string) {
     this.chatMessages.update((messages) => [
       ...messages,
       {
         content: message,
-        senderId: this._authService.currentUser!.userId,
-        receiverId: this.currentOpenChat()?.userId!,
+        senderId: this._authService.currentUser!.id,
+        receiverId: this.currentOpenChat()?.id!,
         sendingTime: new Date().toString(),
-        isReaded: false,
+        isRead: false,
         id: 0
       }
     ])
-    
-    try {
-      const id = await this.hubConnection.invoke('SendMessage', {
-      receiverId: this.currentOpenChat()?.userId,
+
+    this.hubConnection.invoke('SendMessage', {
+      receiverId: this.currentOpenChat()?.id,
       content: message
-      });
-      console.log(`Send to : ${id}`);
-    } catch (err) {
-      console.log(err);
-    }
+    })
+    .then((id) => {
+      console.log(`Message send to ${id}`)
+    })
+    .catch(err => console.log(err));
   }
 
   status (userName: string) : string {
@@ -105,36 +111,12 @@ export class ChatService {
     return onlineUser?.isOnline ? 'Online' : this.currentOpenChat()!.userName;
   }
 
-  async LoadMessages(pageNumber: number) {
-    if (this.hubConnection?.state !== HubConnectionState.Connected) {
-      console.error('Cannot load messages: connection not established');
-      this.isLoading.update(_ => false);
-      return;
-    }
-
-    const currentChat = this.currentOpenChat();
-    const receiverId = currentChat?.userId;
-    
-    console.log('LoadMessages called with:', {
-      pageNumber,
-      currentChat,
-      receiverId,
-      currentChatUser: currentChat?.userName
-    });
-
-    if (!receiverId) {
-      console.error('Cannot load messages: no chat user selected or user ID is missing');
-      this.isLoading.update(_ => false);
-      return;
-    }
-    
-    try {
-      await this.hubConnection.invoke('LoadMessages', receiverId, pageNumber);
-      console.log(`Successfully requested messages for user: ${currentChat?.userName} (ID: ${receiverId})`);
-    } catch (err) {
-      console.error('Error loading messages:', err);
-    } finally {
-      this.isLoading.update(_ => false);
-    }
+  LoadMessages(pageNumber: number) {
+    this.hubConnection?.invoke("LoadMessages", this.currentOpenChat()?.id, pageNumber)
+      .then(_ => console.log(`Load messages ${this.currentOpenChat()?.id}`))
+      .catch(err => console.log(`LoadMessages Error ${err}`))
+      .finally(() => {
+        this.isLoading.update(() => false);
+      });
   }
 }

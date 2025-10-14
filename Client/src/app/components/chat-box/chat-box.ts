@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ChatService } from '../../services/chat';
+import { ChatService } from '../../services/chat-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth-service';
 import { DatePipe } from '@angular/common';

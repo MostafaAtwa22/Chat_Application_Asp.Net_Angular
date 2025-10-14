@@ -32,8 +32,78 @@
   background-color: #555;
 }
 
-.chat-icon { 
+.chat-icon {
   width: 40px;
   height: 40px;
   font-size: 40px;
+}
+
+.chat-box {
+  overflow-y: auto;
+  padding: 15px;
+}
+
+/* Avatar image */
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border: 2px solid #fff;
+  position: relative;
+  z-index: 2;
+}
+
+/* Chat bubble common styles */
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  max-width: 300px;
+  position: relative;
+  z-index: 1;
+  word-wrap: break-word;
+  bottom: 0%;
+}
+
+/* Sent (right) */
+.chat-bubble.sent {
+  background-color: #0084ff;
+  color: #fff;
+  border-bottom-right-radius: 0;
+}
+
+/* Received (left) */
+.chat-bubble.received {
+  background-color: #f1f0f0;
+  color: #000;
+  border-bottom-left-radius: 0;
+}
+
+/* Arrow styles */
+.chat-arrow {
+  width: 0;
+  height: 0;
+  position: absolute;
+  bottom: 0;
+}
+
+.chat-arrow-left {
+  left: -10px;
+  border-bottom: 10px solid #f1f0f0;
+  border-left: 10px solid transparent;
+}
+
+.chat-arrow-right {
+  right: -8px;
+  border-bottom: 10px solid #0084ff;
+  border-right: 10px solid transparent;
+}
+
+/* Message time */
+.chat-time {
+  font-size: 0.75rem;
+  display: block;
+  text-align: right;
+  opacity: 0.8;
+  margin-top: 4px;
 }

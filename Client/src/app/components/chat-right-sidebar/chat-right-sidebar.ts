@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ChatService } from '../../services/chat';
+import { ChatService } from '../../services/chat-service';
 import { TitleCasePipe } from '@angular/common';
 
 @Component({

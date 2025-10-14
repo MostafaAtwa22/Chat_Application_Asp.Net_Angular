@@ -5,9 +5,9 @@
     <!-- Left: Profile -->
     <div class="d-flex align-items-center gap-2">
       <img class="rounded-circle object-fit-cover"
-           [src]="currentUser?.imageProfile || 'https://randomuser.me/api/portraits/lego/5.jpg'"
+           [src]="_authService.currentUser?.imageProfile || 'https://randomuser.me/api/portraits/lego/5.jpg'"
            alt="Profile Picture">
-      <span class="fw-bold">{{currentUser?.fullName | titlecase| titlecase}}</span>
+      <span class="fw-bold">{{_authService.currentUser?.fullName! | titlecase }}</span>
     </div>
 
     <!-- Right: Menu -->
@@ -65,7 +65,7 @@
         </div>
 
         <!-- Badge for notification -->
-        <span class="badge bg-danger rounded-pill">3</span>
+        <span class="badge bg-danger rounded-pill">{{item.unreadCount}}</span>
       </div>
     }
   </div>

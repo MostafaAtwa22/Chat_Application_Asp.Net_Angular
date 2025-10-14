@@ -4,5 +4,5 @@ export interface Message {
   receiverId: string | null;
   content: string | null;
   sendingTime: string;
-  isReaded: boolean;
+  isRead: boolean;
 }

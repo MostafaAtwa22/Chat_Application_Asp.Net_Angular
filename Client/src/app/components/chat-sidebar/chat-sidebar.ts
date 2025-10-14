@@ -6,7 +6,7 @@ import { AuthService } from '../../services/auth-service';
 import { Router } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 import { User } from '../../Models/user';
-import { ChatService } from '../../services/chat';
+import { ChatService } from '../../services/chat-service';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -15,21 +15,16 @@ import { ChatService } from '../../services/chat';
   styleUrl: './chat-sidebar.css'
 })
 export class ChatSidebar implements OnInit {
-  currentUser!: User | null;
-
   onlineUsers = inject(ChatService).onlineUsers;
 
-  private _authService = inject(AuthService);
+  public _authService = inject(AuthService);
   private _router = inject(Router);
-  private _chatService = inject(ChatService);
+  public _chatService = inject(ChatService);
 
-  async ngOnInit(): Promise<void> {
-    try {
-      await this._chatService.startConnection(this._authService.getAccessToken!);
-      this.currentUser = this._authService.currentUser;
-    } catch (err) {
-      console.error('Failed to start chat connection:', err);
-    }
+  async ngOnInit() {
+    const currentUserId = this._authService.currentUser?.id;
+    const token = this._authService.getAccessToken!;
+    await this._chatService.startConnection(token, currentUserId);
   }
 
   logout() {
@@ -39,7 +34,16 @@ export class ChatSidebar implements OnInit {
   }
 
   openChatWindow(user: User) {
+    // set the current chat
     this._chatService.currentOpenChat.set(user);
+
+    // clear previous messages before loading new chat
+    this._chatService.chatMessages.set([]);
+
+    // set loading state while messages load
+    this._chatService.isLoading.set(true);
+
+    // load first page of messages for the selected user
     this._chatService.LoadMessages(1);
   }
 }
