@@ -19,6 +19,7 @@ namespace API.EndPoints
             group.MapPost("/register",
                 async (HttpContext httpContext,
                 [FromServices] UserManager<ApplicationUser> userManager,
+                [FromServices] TokenService tokenService,
                 [FromForm] RegisterDto request) =>
             {
                 // Manual model validation
@@ -41,44 +42,48 @@ namespace API.EndPoints
                     );
                 }
 
-                var userFromDb = await userManager.FindByEmailAsync(request.Email);
-                if (userFromDb is not null)
+                var existingUser = await userManager.FindByEmailAsync(request.Email);
+                if (existingUser is not null)
                 {
                     return Results.BadRequest(
                         Response<string>.Failure("User already exists.")
                     );
                 }
-                
+
+                // Upload profile image if available
                 string pictureUrl = string.Empty;
                 if (request.ProfileImage != null && request.ProfileImage.Length > 0)
                 {
                     var pictureFileName = await FileUpload.Upload(request.ProfileImage);
                     pictureUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/uploads/{pictureFileName}";
                 }
-                
-                var user = new ApplicationUser
+
+                var newUser = new ApplicationUser
                 {
                     UserName = request.UserName,
                     Email = request.Email,
                     FullName = request.FullName,
-                    ImageProfile = pictureUrl 
+                    ImageProfile = pictureUrl
                 };
 
-                var result = await userManager.CreateAsync(user, request.Password);
-                if (!result.Succeeded)
-                {
-                    var errorMessages = string.Join("; ",
-                        result.Errors.Select(e => e.Description));
+                var createResult = await userManager.CreateAsync(newUser, request.Password);
 
-                    return Results.BadRequest(
-                        Response<string>.Failure(errorMessages)
-                    );
+                if (!createResult.Succeeded)
+                {
+                    var errorMessages = string.Join("; ", createResult.Errors.Select(e => e.Description));
+                    return Results.BadRequest(Response<string>.Failure(errorMessages));
                 }
 
+                // ✅ Generate JWT Token instead of returning the email
+                var token = tokenService.GenerateToken(newUser.Id, newUser.UserName!);
+
+                // ✅ Return token in "data" field
                 return Results.Ok(
-                    Response<string>.Success(user.Email!, "User registered successfully.")
+                    Response<string>.Success(token, "User registered successfully.")
                 );
             }).DisableAntiforgery();
+
+
 
             group.MapPost("/login", async ([FromServices]UserManager<ApplicationUser> userManager,
             [FromServices]TokenService tokenService, [FromBody]LoginDto loginDto) =>

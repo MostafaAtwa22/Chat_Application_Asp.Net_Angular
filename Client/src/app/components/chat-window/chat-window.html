@@ -66,10 +66,11 @@
           (input)="autoResize($event)"
           class="form-control chat-textarea rounded-pill px-4 py-2 border-0 shadow-sm flex-grow-1"
           placeholder="Type your message..."
-          (keyup.enter)="sendMessage()"
+          (keydown)="onKeyDown($event)"
           rows="1"
           (click)="showEmojiPicker = false"
         ></textarea>
+
 
         <!-- Send Button -->
         <button

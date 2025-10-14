@@ -14,7 +14,7 @@ import { PickerModule, SkinComponent } from '@ctrl/ngx-emoji-mart';
 })
 export class ChatWindow {
   _chatService = inject(ChatService);
-  message!: string;
+  message: string = '';
   showEmojiPicker = false;
 
   toggleEmojiPicker() {
@@ -23,16 +23,28 @@ export class ChatWindow {
 
   addEmoji(event: any) {
     this.message += event.emoji.native;
-    this.showEmojiPicker = false; // Close picker after selecting emoji
+    this.showEmojiPicker = false; 
+  }
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessage();
+    }
   }
 
   sendMessage() {
-    if (!this.message)
-      return;
-    this._chatService.sendMessage(this.message);
-    this.message = "";
-    this.showEmojiPicker = false; // Close picker when sending message
+    const text = this.message.trim();
+    if (!text) return;
+
+    this._chatService.sendMessage(text);
+    this.message = '';
+
+    const textarea = document.querySelector('.chat-textarea') as HTMLTextAreaElement;
+    if (textarea) textarea.style.height = 'auto';
+
+    this.showEmojiPicker = false;
   }
+
 
   autoResize(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;

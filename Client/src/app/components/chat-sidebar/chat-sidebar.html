@@ -1,23 +1,19 @@
 <div class="p-2 bg-white position-sticky top-0 w-100 z-3">
-
   <!-- Top row: Profile + Menu -->
   <div class="d-flex justify-content-between align-items-center mb-2">
-    <!-- Left: Profile -->
     <div class="d-flex align-items-center gap-2">
       <img class="rounded-circle object-fit-cover"
            [src]="_authService.currentUser?.imageProfile || 'https://randomuser.me/api/portraits/lego/5.jpg'"
            alt="Profile Picture">
-      <span class="fw-bold">{{_authService.currentUser?.fullName! | titlecase }}</span>
+      <span class="fw-bold">{{ _authService.currentUser?.fullName! | titlecase }}</span>
     </div>
 
-    <!-- Right: Menu -->
     <div>
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item
-        (click)="logout()">
+        <button mat-menu-item (click)="logout()">
           <mat-icon>logout</mat-icon>
           <span>Logout</span>
         </button>
@@ -25,49 +21,40 @@
     </div>
   </div>
 
-  <!-- Bottom row: Search -->
-  <div class="d-flex align-items-center">
+  <!-- Search -->
+  <div class="d-flex align-items-center mb-2">
     <input type="text"
+           [(ngModel)]="searchTerm"
+           (input)="filterUsers()"
            placeholder="Search..."
            class="form-control rounded-pill px-3 py-2"
            style="background-color: whitesmoke; border: none; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
   </div>
-
-  <div class="py-2 overflow-y-auto" style="scroll-behavior: smooth;">
-    @for (item of onlineUsers(); track item) {
-      <div class="d-flex align-items-center gap-3 py-2 px-2 rounded hover-shadow-sm"
-          style="cursor: pointer; transition: background-color 0.2s;"
-          onmouseover="this.style.backgroundColor='#f8f9fa'"
-          onmouseout="this.style.backgroundColor='transparent'"
-          (click)="openChatWindow(item)">
-
-        <!-- Profile Image + Status -->
-        <div class="position-relative" style="width: 40px; height: 40px;">
-          <img [src]="item.profilePicture || 'https://randomuser.me/api/portraits/lego/5.jpg'"
-              alt="Friend"
-              class="rounded-circle border w-100 h-100"
-              style="object-fit: cover;">
-
-          <!-- Online/Offline dot -->
-          @if(item.isOnline) {
-            <div class="position-absolute bottom-0 end-0 rounded-circle bg-success border border-white"
-                style="width: 12px; height: 12px;"></div>
-          } @else {
-            <div class="position-absolute bottom-0 end-0 rounded-circle bg-danger border border-white"
-                style="width: 12px; height: 12px;"></div>
-          }
-        </div>
-
-        <!-- Text Section -->
-        <div class="flex-grow-1">
-          <div class="fw-semibold text-dark">{{item.fullName | titlecase}}</div>
-          <small class="text-muted">{{item.unreadCount ? item.unreadCount + ' new messages' : ''}}</small>
-        </div>
-
-        <!-- Badge for notification -->
-        <span class="badge bg-danger rounded-pill">{{item.unreadCount}}</span>
-      </div>
-    }
-  </div>
-
 </div>
+
+<div class="overflow-auto" style="max-height: calc(100vh - 150px);">
+  @for (item of filteredUsers(); track item) {
+    <div class="d-flex align-items-center gap-3 py-2 px-2 rounded hover-shadow-sm user-item"
+         (click)="openChatWindow(item)">
+
+      <div class="position-relative" style="width: 40px; height: 40px;">
+        <img [src]="item.profilePicture || 'https://randomuser.me/api/portraits/lego/5.jpg'"
+             alt="Friend"
+             class="rounded-circle border w-100 h-100"
+             style="object-fit: cover;">
+        <div class="position-absolute bottom-0 end-0 rounded-circle border border-white"
+             [ngClass]="item.isOnline ? 'bg-success' : 'bg-danger'"
+             style="width: 12px; height: 12px;">
+        </div>
+      </div>
+
+      <div class="flex-grow-1">
+        <div class="fw-semibold text-dark">{{ item.fullName | titlecase }}</div>
+        <small class="text-muted">{{ item.unreadCount ? item.unreadCount + ' new messages' : '' }}</small>
+      </div>
+
+      <span *ngIf="item.unreadCount" class="badge bg-danger rounded-pill">{{ item.unreadCount }}</span>
+    </div>
+  }
+</div>
+
