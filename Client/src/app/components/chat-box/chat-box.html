@@ -1,9 +1,10 @@
-<div class="d-flex chat-box flex-column h-100 py-2 border-0 overflow-auto bg-light rounded-3 shadow-sm">
+<div class="d-flex chat-box flex-column h-100 py-2 border-0 overflow-auto bg-light" #chatBox>
   <div class="h-100">
     <!-- Load More Button -->
     @if (_chatService.chatMessages().length > 5) {
     <div class="text-center py-2 sticky-top bg-light">
-      <button class="text-secondary small shadow-sm px-4 py-2 rounded bg-white border border-light hover:bg-body-tertiary">
+      <button class="text-secondary small shadow-sm px-4 py-2 rounded bg-white border border-light hover:bg-body-tertiary"
+      (click)="loadMoreMessages()">
         @if (_chatService.isLoading()) {
         <div class="d-flex align-items-center justify-content-center gap-2">
           <mat-spinner diameter="18" strokeWidth="3"></mat-spinner>

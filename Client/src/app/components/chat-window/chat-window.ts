@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { ChatService } from '../../services/chat-service';
 import { TitleCasePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,8 @@ import { PickerModule, SkinComponent } from '@ctrl/ngx-emoji-mart';
   styleUrl: './chat-window.css'
 })
 export class ChatWindow {
+  @ViewChild('chatBox') chatContainer?: ElementRef;
+
   _chatService = inject(ChatService);
   message: string = '';
   showEmojiPicker = false;
@@ -23,7 +25,7 @@ export class ChatWindow {
 
   addEmoji(event: any) {
     this.message += event.emoji.native;
-    this.showEmojiPicker = false; 
+    this.showEmojiPicker = false;
   }
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -38,13 +40,12 @@ export class ChatWindow {
 
     this._chatService.sendMessage(text);
     this.message = '';
-
+    this.scrollToBottom();
     const textarea = document.querySelector('.chat-textarea') as HTMLTextAreaElement;
     if (textarea) textarea.style.height = 'auto';
 
     this.showEmojiPicker = false;
   }
-
 
   autoResize(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
@@ -55,5 +56,10 @@ export class ChatWindow {
   // Close emoji picker when clicking outside
   onOutsideClick() {
     this.showEmojiPicker = false;
+  }
+
+  private scrollToBottom() {
+    if (this.chatContainer)
+      this.chatContainer.nativeElement.scrollToTop = this.chatContainer.nativeElement.scrollHeight;
   }
 }

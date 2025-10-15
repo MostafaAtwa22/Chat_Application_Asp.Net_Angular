@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ChatService } from '../../services/chat-service';
 import { User } from '../../Models/user';
+import { TypingIndicator } from '../typing-indicator/typing-indicator';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -21,7 +22,8 @@ import { User } from '../../Models/user';
     CommonModule,
     NgIf,
     NgClass,
-    FormsModule
+    FormsModule,
+    TypingIndicator
   ],
   templateUrl: './chat-sidebar.html',
   styleUrl: './chat-sidebar.css'

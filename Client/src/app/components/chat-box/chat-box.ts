@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { ChatService } from '../../services/chat-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth-service';
@@ -11,7 +11,36 @@ import { MatIcon } from '@angular/material/icon';
   templateUrl: './chat-box.html',
   styleUrl: './chat-box.css'
 })
-export class ChatBox {
+export class ChatBox implements AfterViewChecked {
+  @ViewChild('chatBox', {read: ElementRef}) public chatBox?: ElementRef;
   _chatService = inject(ChatService);
   _authService = inject(AuthService);
+
+  ngAfterViewChecked(): void {
+    if (this._chatService.autScrollEnable()) {
+      this.scrollToBottom();
+    }
+  }
+
+  scrollToBottom() {
+    this._chatService.autScrollEnable.set(true);
+    this.chatBox!.nativeElement.scrollTo({
+      top: this.chatBox!.nativeElement.scrollHeight,
+      behavior: 'smooth'
+    })
+  }
+  scrollToTop() {
+    this._chatService.autScrollEnable.set(false);
+    this.chatBox!.nativeElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  private pageNumber = 2;
+  loadMoreMessages() {
+    this.pageNumber++;
+    this._chatService.loadMoreMessages(this.pageNumber);
+    this.scrollToTop();
+  }
 }

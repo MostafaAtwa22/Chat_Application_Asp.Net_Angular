@@ -51,6 +51,9 @@
       <div class="flex-grow-1">
         <div class="fw-semibold text-dark">{{ item.fullName | titlecase }}</div>
         <small class="text-muted">{{ item.unreadCount ? item.unreadCount + ' new messages' : '' }}</small>
+        @if(item!.isTyping) {
+          <app-typing-indicator/>
+        }
       </div>
 
       <span *ngIf="item.unreadCount" class="badge bg-danger rounded-pill">{{ item.unreadCount }}</span>

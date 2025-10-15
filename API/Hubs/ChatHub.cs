@@ -111,6 +111,7 @@ namespace API.Hubs
 
                 await _context.SaveChangesAsync();
             }
+            await Task.Delay(1000);
 
             // 3) Send the messages back to the requesting user
             await Clients.User(currentUser.Id).ReceiveMessageList(messages);

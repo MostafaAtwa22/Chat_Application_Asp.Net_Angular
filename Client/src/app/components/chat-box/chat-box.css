@@ -2,11 +2,9 @@
   scroll-behavior: smooth;
   overflow: hidden;
   padding: 10px;
-  background-color: #f5f5f5;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   height: 70vh;
-  border-radius: 5px;
   overflow-y: scroll;
+  width: 100%;
 }
 
 .chat-box::-webkit-scrollbar {

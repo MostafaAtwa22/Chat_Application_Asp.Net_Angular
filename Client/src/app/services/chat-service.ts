@@ -4,6 +4,7 @@ import { AuthService } from './auth-service';
 import { environment } from '../environments/environment';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { Message } from '../Models/message';
+import { single } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class ChatService {
   isLoading = signal<boolean>(true);
   currentOpenChat = signal<User | null>(null);
   _authService = inject(AuthService)
+  autScrollEnable = signal<boolean>(true);
 
   private hubConnection!: HubConnection;
 
@@ -27,6 +29,18 @@ export class ChatService {
     })
     .withAutomaticReconnect()
     .build();
+
+    // notify the users that a user login now
+    this.hubConnection.on('Notify', (user: User) => {
+      Notification.requestPermission().then((res) => {
+        if (res = 'granted') {
+          new Notification('Acttive Now 🟢', {
+            body: `${user.fullName} is online now`,
+            icon: user.imageProfile || 'https://randomuser.me/api/portraits/lego/5.jpg'
+          })
+        }
+      })
+    })
 
     // start the connection
     this.hubConnection.start()
@@ -43,13 +57,50 @@ export class ChatService {
       );
     });
 
-    // subscribe to receive message list
-    this.hubConnection.on('ReceiveMessageList', (messages: Message[]) => {
-      // replace messages with the loaded page (since we cleared before loading)
-      this.chatMessages.set(messages);
-      this.isLoading.set(false);
+    // Notify if a user is typing
+    const typingTimers = new Map<string, any>();
+    this.hubConnection.on('NotifyTypingToUser', (senderUserName) => {
+      // Set typing to true
+      this.onlineUsers.update((users) =>
+        users.map((user) => {
+          if (user.userName === senderUserName) {
+            user.isTyping = true;
+          }
+          return user;
+        })
+      );
+
+      // Clear previous timeout if exists
+      if (typingTimers.has(senderUserName)) {
+        clearTimeout(typingTimers.get(senderUserName));
+      }
+
+      // Set a new timeout
+      const timer = setTimeout(() => {
+        this.onlineUsers.update((users) =>
+          users.map((user) => {
+            if (user.userName === senderUserName) {
+              user.isTyping = false;
+            }
+            return user;
+          })
+        );
+        typingTimers.delete(senderUserName);
+      }, 2000);
+
+      typingTimers.set(senderUserName, timer);
     });
 
+    // subscribe to receive message list
+    this.hubConnection.on('ReceiveMessageList', (messages: Message[]) => {
+    this.isLoading.update(_ => true);
+    this.chatMessages.update(existing => {
+      // دمج الرسائل القديمة بالصفحة الجديدة
+      // افتراض أن الرسائل القديمة في messages هي الأقدم
+      return [...messages, ...existing];
+    });
+      this.isLoading.set(false);
+    });
 
     this.hubConnection.on('ReceiveNewMessage', (message: Message) => {
       const current = this.currentOpenChat();
@@ -112,11 +163,22 @@ export class ChatService {
   }
 
   LoadMessages(pageNumber: number) {
+    this.isLoading.update(_ => true);
     this.hubConnection?.invoke("LoadMessages", this.currentOpenChat()?.id, pageNumber)
       .then(_ => console.log(`Load messages ${this.currentOpenChat()?.id}`))
       .catch(err => console.log(`LoadMessages Error ${err}`))
       .finally(() => {
         this.isLoading.update(() => false);
       });
+  }
+
+  notifyTyping() {
+    this.hubConnection.invoke('NotifyTyping', this.currentOpenChat()?.userName)
+    .then(x => console.log(`${x} is typing`))
+    .catch(err => console.log(`Tying ${err}`))
+  }
+
+  loadMoreMessages(pageNumber: number) {
+    this.LoadMessages(pageNumber);
   }
 }
