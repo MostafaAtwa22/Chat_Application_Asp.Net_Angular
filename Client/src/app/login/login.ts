@@ -66,7 +66,9 @@ export class Login {
     this._authService.login({ email, password }).subscribe({
       next: (response) => {
         this._authService.me().subscribe();
-        this._snakBar.open("Login successful!", 'Close');
+        this._snakBar.open("Login successful!", 'Close', {
+          duration: 500,
+        });
         console.log("Login successful:", response);
 
       },

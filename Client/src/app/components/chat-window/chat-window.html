@@ -4,6 +4,11 @@
     <!-- Chat Header -->
     <div class="chat-header d-flex justify-content-between align-items-center w-100 bg-white px-4 py-3 border-bottom">
       <div class="d-flex align-items-center gap-3">
+        <!-- Mobile Menu Button (Left Sidebar) -->
+        <button class="btn btn-light d-md-none p-2 mobile-menu-btn" (click)="toggleLeftSidebar()" title="Open Contacts">
+          <mat-icon>menu</mat-icon>
+        </button>
+        
         <img
           [src]="_chatService.currentOpenChat()?.profilePicture || 'https://randomuser.me/api/portraits/lego/5.jpg'"
           alt="User Profile Picture"
@@ -22,7 +27,12 @@
 
       <div class="d-flex align-items-center gap-3">
         <mat-icon class="text-secondary" style="cursor: pointer;" title="Start Video Call">video_call</mat-icon>
-        <mat-icon class="text-secondary" style="cursor: pointer;" title="View Info">info</mat-icon>
+        <mat-icon class="text-secondary d-none d-md-block" style="cursor: pointer;" title="View Info" (click)="toggleRightSidebar()">info</mat-icon>
+        
+        <!-- Mobile Info Button (Right Sidebar) -->
+        <button class="btn btn-light d-md-none p-2 mobile-menu-btn" (click)="toggleRightSidebar()" title="View Info">
+          <mat-icon>info</mat-icon>
+        </button>
       </div>
     </div>
 
@@ -86,8 +96,14 @@
     </div>
   </div>
 } @else {
-  <div class="d-flex flex-column align-items-center bg-white justify-content-center h-100 text-center p-4 bg-light rounded-3 shadow-sm">
-    <img src="openchat.png" alt="Open Chat Illustration" class="img-fluid mb-4" style="max-width: 280px; height: auto;">
+  <div class="d-flex flex-column align-items-center bg-white justify-content-center h-100 text-center p-4 bg-light rounded-3 shadow-sm no-chat-view">
+    <!-- Mobile Menu Button for Empty State -->
+    <button class="btn btn-primary d-md-none mb-4 px-4 py-2" (click)="toggleLeftSidebar()">
+      <mat-icon class="me-2">contacts</mat-icon>
+      Open Contacts
+    </button>
+    
+    <img src="openchat.png" alt="Open Chat Illustration" class="img-fluid mb-4 no-chat-image" style="max-width: 280px; height: auto;">
     <h5 class="fw-semibold text-dark mb-1">No Chat Selected</h5>
     <p class="text-muted small mb-0">
       Choose a contact from the sidebar to start a conversation.

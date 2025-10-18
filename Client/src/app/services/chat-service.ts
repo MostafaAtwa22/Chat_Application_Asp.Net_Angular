@@ -22,6 +22,17 @@ export class ChatService {
   private hubConnection!: HubConnection;
 
   async startConnection(token: string, senderId?: string) {
+    // dublicat connection ex(laptop, mobile)
+    if (this.hubConnection?.state == HubConnectionState.Connected)
+      return;
+
+    if (this.hubConnection) {
+      this.hubConnection.off('ReceiveNewMessage');
+      this.hubConnection.off('OnlineUsers');
+      this.hubConnection.off('NotifyTypingToUser');
+      this.hubConnection.off('ReceiveMessageList');
+      this.hubConnection.off('Notify');
+    }
     // config the connection
     this.hubConnection = new HubConnectionBuilder()
     .withUrl(`${this.hubUrl}?senderId=${senderId || ''}`, {
@@ -103,9 +114,11 @@ export class ChatService {
     });
 
     this.hubConnection.on('ReceiveNewMessage', (message: Message) => {
+      let audio = new Audio('assets/notifications.wav');
       const current = this.currentOpenChat();
       if (current && (message.senderId === current.id || message.receiverId === current.id)) {
         // belongs to currently open chat
+        audio.play();
         this.chatMessages.update((messages) => [...messages, message]);
         document.title = '(1) New message';
       } else {

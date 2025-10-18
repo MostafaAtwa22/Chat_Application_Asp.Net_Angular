@@ -1,4 +1,5 @@
 .profile-right-card {
+  z-index: 9999;
   background: #ffffff;
   width: 100%;
 }
@@ -21,5 +22,79 @@
 .about-section {
   max-width: 85%;
   line-height: 1.6;
+}
+
+/* Responsive Styles */
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+  .profile-image {
+    width: 130px;
+    height: 130px;
+  }
+
+  .profile-right-card {
+    padding: 16px !important;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+  .profile-image {
+    width: 110px;
+    height: 110px;
+  }
+
+  .profile-right-card {
+    padding: 12px !important;
+  }
+
+  .profile-right-card h5 {
+    font-size: 1.1rem;
+  }
+
+  .about-section {
+    max-width: 90%;
+  }
+
+  .about-section h6 {
+    font-size: 0.95rem;
+  }
+
+  .about-section p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .profile-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-right-card {
+    padding: 10px !important;
+  }
+
+  .profile-right-card h5 {
+    font-size: 1rem;
+  }
+
+  .profile-right-card p {
+    font-size: 0.8rem;
+  }
+
+  .about-section {
+    max-width: 95%;
+  }
+
+  .about-section h6 {
+    font-size: 0.9rem;
+  }
+
+  .about-section p {
+    font-size: 0.8rem;
+  }
 }
 

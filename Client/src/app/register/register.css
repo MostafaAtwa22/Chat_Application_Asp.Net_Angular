@@ -1,0 +1,60 @@
+/* Responsive Styles for Register Page */
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+  .col-lg-5 .p-4 {
+    width: 85% !important;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+  .col-lg-5 .p-4 {
+    width: 95% !important;
+    padding: 1.5rem !important;
+  }
+
+  .text-center.fw-bold.fs-5 {
+    font-size: 1.25rem !important;
+  }
+
+  mat-form-field {
+    font-size: 0.9rem;
+  }
+
+  .profile-upload img {
+    width: 100px !important;
+    height: 100px !important;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .col-lg-5 .p-4 {
+    width: 100% !important;
+    padding: 1rem !important;
+    box-shadow: none !important;
+  }
+
+  .text-center.fw-bold.fs-5 {
+    font-size: 1.1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  mat-form-field {
+    font-size: 0.85rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+  }
+
+  .text-center.w-100.mt-4 {
+    font-size: 0.85rem;
+  }
+
+  .profile-upload img {
+    width: 80px !important;
+    height: 80px !important;
+  }
+}

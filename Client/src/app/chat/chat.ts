@@ -12,4 +12,14 @@ import { ChatRightSidebar } from "../components/chat-right-sidebar/chat-right-si
 })
 export class Chat {
   _chatService = inject(ChatService);
+
+  closeSidebars() {
+    const leftSidebar = document.querySelector('.chat-left-sidebar');
+    const rightSidebar = document.querySelector('.chat-right-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (leftSidebar) leftSidebar.classList.remove('show');
+    if (rightSidebar) rightSidebar.classList.remove('show');
+    if (overlay) overlay.classList.remove('show');
+  }
 }

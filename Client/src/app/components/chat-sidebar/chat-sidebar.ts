@@ -75,5 +75,18 @@ export class ChatSidebar implements OnInit {
     this._chatService.chatMessages.set([]);
     this._chatService.isLoading.set(true);
     this._chatService.LoadMessages(1);
+    
+    // Close sidebar on mobile after selecting a user
+    this.closeSidebarOnMobile();
+  }
+
+  private closeSidebarOnMobile() {
+    const sidebar = document.querySelector('.chat-left-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar && overlay) {
+      sidebar.classList.remove('show');
+      overlay.classList.remove('show');
+    }
   }
 }

@@ -1,0 +1,114 @@
+/* Desktop Layout (default) */
+.chat-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-left-sidebar {
+  width: 25%;
+  min-width: 280px;
+  max-width: 350px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.chat-main-window {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-right-sidebar {
+  width: 25%;
+  min-width: 280px;
+  max-width: 350px;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Tablet Layout (768px - 1024px) */
+@media (max-width: 1024px) {
+  .chat-right-sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    z-index: 1000;
+    transform: translateX(100%);
+    width: 300px;
+    max-width: 300px;
+  }
+
+  .chat-right-sidebar.show {
+    transform: translateX(0);
+  }
+
+  .chat-left-sidebar {
+    width: 30%;
+    min-width: 250px;
+  }
+}
+
+/* Mobile Layout (< 768px) */
+@media (max-width: 768px) {
+  .chat-container {
+    flex-direction: column;
+  }
+
+  .chat-left-sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    z-index: 1001;
+    transform: translateX(-100%);
+  }
+
+  .chat-left-sidebar.show {
+    transform: translateX(0);
+  }
+
+  .chat-main-window {
+    width: 100%;
+    flex: 1;
+  }
+
+  .chat-right-sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    z-index: 1000;
+    transform: translateX(100%);
+  }
+
+  .chat-right-sidebar.show {
+    transform: translateX(0);
+  }
+}
+
+/* Overlay for mobile sidebars */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.sidebar-overlay.show {
+  display: block;
+}
+
+/* Small Mobile (< 480px) */
+@media (max-width: 480px) {
+  .chat-left-sidebar,
+  .chat-right-sidebar {
+    width: 90%;
+    max-width: 100%;
+  }
+}

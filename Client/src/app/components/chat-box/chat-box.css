@@ -105,3 +105,78 @@
   opacity: 0.8;
   margin-top: 4px;
 }
+
+/* Responsive Styles */
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+  .chat-bubble {
+    max-width: 280px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+  .chat-box {
+    padding: 8px;
+  }
+
+  .chat-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .chat-bubble {
+    max-width: 70%;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .chat-time {
+    font-size: 0.7rem;
+  }
+
+  /* Adjust spacing */
+  .d-flex.mb-4 {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .chat-box {
+    padding: 6px;
+  }
+
+  .chat-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .chat-bubble {
+    max-width: 75%;
+    padding: 7px 10px;
+    font-size: 0.85rem;
+  }
+
+  .chat-bubble small {
+    font-size: 0.85rem;
+  }
+
+  .chat-time {
+    font-size: 0.65rem;
+  }
+
+  /* Reduce arrow size */
+  .chat-arrow-left {
+    left: -8px;
+    border-bottom: 8px solid #f1f0f0;
+    border-left: 8px solid transparent;
+  }
+
+  .chat-arrow-right {
+    right: -6px;
+    border-bottom: 8px solid #0084ff;
+    border-right: 8px solid transparent;
+  }
+}

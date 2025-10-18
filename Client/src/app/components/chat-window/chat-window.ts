@@ -62,4 +62,24 @@ export class ChatWindow {
     if (this.chatContainer)
       this.chatContainer.nativeElement.scrollToTop = this.chatContainer.nativeElement.scrollHeight;
   }
+
+  toggleLeftSidebar() {
+    const sidebar = document.querySelector('.chat-left-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar && overlay) {
+      sidebar.classList.toggle('show');
+      overlay.classList.toggle('show');
+    }
+  }
+
+  toggleRightSidebar() {
+    const sidebar = document.querySelector('.chat-right-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar && overlay) {
+      sidebar.classList.toggle('show');
+      overlay.classList.toggle('show');
+    }
+  }
 }

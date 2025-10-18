@@ -115,7 +115,9 @@ export class Register {
     this._authService.register(formData).subscribe({
       next: (response) => {
         this._authService.me().subscribe();
-        this._snakBar.open("Registration successful!", 'Close');
+        this._snakBar.open("Registration successful!", 'Close', {
+          duration: 500
+        });
         console.log("Registration successful:", response);
       },
       error: (err: HttpErrorResponse) => {

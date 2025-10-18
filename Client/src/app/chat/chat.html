@@ -1,14 +1,17 @@
-<div class="d-flex rounded h-100 justify-content-between bg-light">
+<div class="chat-container d-flex rounded h-100 justify-content-between bg-light">
+  <!-- Overlay for mobile sidebars -->
+  <div class="sidebar-overlay" (click)="closeSidebars()"></div>
+
   <!-- Left Sidebar -->
-  <app-chat-sidebar class="bg-white border-end shadow-sm" style="width: 25%;"></app-chat-sidebar>
+  <app-chat-sidebar class="chat-left-sidebar bg-white border-end shadow-sm"></app-chat-sidebar>
 
   <!-- Chat Window -->
-  <div class="flex-grow-1 bg-white">
+  <div class="chat-main-window flex-grow-1 bg-white">
     <app-chat-window></app-chat-window>
   </div>
 
   <!-- Right Sidebar -->
-  <div class="chat-right-sidebar bg-white border-start shadow-sm p-3" style="width: 25%;">
+  <div class="chat-right-sidebar bg-white border-start shadow-sm p-3">
     <app-chat-right-sidebar></app-chat-right-sidebar>
   </div>
 </div>
