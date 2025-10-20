@@ -14,23 +14,19 @@ namespace API.Hubs
         }
 
         public async Task SendOffer(string receiverId, string offer)
-        {
-            await Clients.User(receiverId).ReceiveOffer(Context.UserIdentifier!, offer);
-        }
+            => await Clients.User(receiverId)
+                            .ReceiveOffer(Context.UserIdentifier!, offer);
 
         public async Task SendAnswer(string receiverId, string answer)
-        {
-            await Clients.User(receiverId).ReceiveAnswer(Context.UserIdentifier!, answer);
-        }
+            => await Clients.User(receiverId)
+                            .ReceiveAnswer(Context.UserIdentifier!, answer);
 
         public async Task SendIceCandidate(string receiverId, string candidate)
-        {
-            await Clients.User(receiverId).ReceiveIceCandidate(Context.UserIdentifier!, candidate);
-        }
+            => await Clients.User(receiverId)
+                            .ReceiveIceCandidate(Context.UserIdentifier!, candidate);
 
         public async Task EndCall(string receiverId)
-        {
-            await Clients.User(receiverId).CallEnd();
-        }
+            => await Clients.User(receiverId)
+                            .CallEnd();
     }
 }

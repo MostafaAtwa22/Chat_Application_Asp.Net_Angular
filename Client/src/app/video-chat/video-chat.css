@@ -1,0 +1,58 @@
+.call-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 2rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.call-btn mat-icon {
+  font-size: 1.5rem;
+}
+
+.accept-btn {
+  background-color: #28a745;
+}
+.accept-btn:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.decline-btn {
+  background-color: #dc3545;
+}
+.decline-btn:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+.end-btn {
+  background-color: #6c757d;
+}
+.end-btn:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+video {
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .call-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  video {
+    width: 35%;
+    top: 1rem;
+    right: 1rem;
+  }
+}
