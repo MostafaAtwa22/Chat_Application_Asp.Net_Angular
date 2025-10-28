@@ -1,7 +1,7 @@
-<div class="position-relative w-100 h-100 bg-dark overflow-hidden rounded-4 shadow-lg">
+<div class="video-container position-relative w-100 h-100 bg-dark overflow-hidden rounded-4 shadow-lg">
   <!-- Remote Video -->
   <video
-    class="w-100 h-100 object-fit-cover"
+    class="remote-video w-100 h-100"
     #remoteVideo
     autoplay
     playsInline
@@ -9,43 +9,36 @@
 
   <!-- Local Video (small preview) -->
   <video
-    class="position-absolute top-3 end-3 w-25 h-auto border border-3 border-light rounded-3 shadow-sm"
+    class="local-video position-absolute"
     #localVideo
     autoplay
     playsInline
   ></video>
 
   <!-- Controls -->
-  <div
-    class="position-absolute bottom-0 start-0 end-0 z-3 d-flex justify-content-center align-items-center gap-4 py-3 bg-gradient"
-    style="background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"
-  >
-  @if(_signalRService.incomingCall) {
-    <button class="call-btn accept-btn"
-    (click)="acceptCall()">
-      <mat-icon>call</mat-icon>
-      <span>Accept</span>
-    </button>
+  <div class="controls-bar position-absolute bottom-0 start-0 end-0">
+    @if(_signalRService.incomingCall) {
+      <button class="call-btn accept-btn" (click)="acceptCall()">
+        <mat-icon>call</mat-icon>
+        <span>Accept</span>
+      </button>
 
-    <button class="call-btn decline-btn"
-    (click)="declineCall()">
-      <mat-icon>call_end</mat-icon>
-      <span>Decline</span>
-    </button>
-  }
-  @if (!_signalRService.incomingCall && !this._signalRService.isCallActive) {
-    <button class="call-btn accept-btn"
-    (click)="startCall()">
-      <mat-icon>call</mat-icon>
-      <span>Start Call</span>
-    </button>
-  }
-  @if (!_signalRService.incomingCall) {
-    <button class="call-btn end-btn"
-    (click)="endCall()">
-      <mat-icon>call_end</mat-icon>
-      <span>End Call</span>
-    </button>
-  }
+      <button class="call-btn decline-btn" (click)="declineCall()">
+        <mat-icon>call_end</mat-icon>
+        <span>Decline</span>
+      </button>
+    }
+    @if (!_signalRService.incomingCall && !_signalRService.isCallActive) {
+      <button class="call-btn start-btn" (click)="startCall()">
+        <mat-icon>call</mat-icon>
+        <span>Start Call</span>
+      </button>
+    }
+    @if (!_signalRService.incomingCall) {
+      <button class="call-btn end-btn bg-danger" (click)="endCall()">
+        <mat-icon>call_end</mat-icon>
+        <span>End Call</span>
+      </button>
+    }
   </div>
 </div>

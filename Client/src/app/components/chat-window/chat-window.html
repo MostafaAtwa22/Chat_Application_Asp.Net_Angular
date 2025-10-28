@@ -1,112 +1,123 @@
-@if (_chatService.currentOpenChat()) {
-  <div class="position-relative d-flex flex-column h-100 w-100 bg-white rounded-3 shadow-sm overflow-hidden">
+<div class="position-relative d-flex flex-column h-100 w-100">
+  @if (isLoading) {
+    <!-- Loading Screen -->
+    <div class="chat-loading d-flex flex-column justify-content-center align-items-center h-100 w-100 bg-white rounded-3 shadow-sm">
+      <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+      <h6 class="text-muted">Loading chat...</h6>
+    </div>
+  }
+  @else if (_chatService.currentOpenChat()) {
+    <!-- Chat Container -->
+    <div class="chat-container position-relative d-flex flex-column h-100 w-100 bg-white rounded-3 shadow-sm overflow-hidden fade-in">
 
-    <!-- Chat Header -->
-    <div class="chat-header d-flex justify-content-between align-items-center w-100 bg-white px-4 py-3 border-bottom">
-      <div class="d-flex align-items-center gap-3">
-        <!-- Mobile Menu Button (Left Sidebar) -->
-        <button class="btn btn-light d-md-none p-2 mobile-menu-btn" (click)="toggleLeftSidebar()" title="Open Contacts">
-          <mat-icon>menu</mat-icon>
-        </button>
-        
-        <img
-          [src]="_chatService.currentOpenChat()?.profilePicture || 'https://randomuser.me/api/portraits/lego/5.jpg'"
-          alt="User Profile Picture"
-          class="rounded-circle border border-2 shadow-sm"
-          style="width: 50px; height: 50px; object-fit: cover;"
-        >
-        <div>
-          <h6 class="fw-semibold mb-0 text-dark">
-            {{ _chatService.currentOpenChat()?.fullName | titlecase }}
-          </h6>
-          <small class="text-muted">
-            {{ _chatService.status(_chatService.currentOpenChat()?.userName!) }}
-          </small>
+      <!-- Chat Header -->
+      <div class="chat-header d-flex justify-content-between align-items-center w-100 bg-white px-4 py-3 border-bottom">
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-light d-md-none p-2 mobile-menu-btn" (click)="toggleLeftSidebar()" title="Open Contacts">
+            <mat-icon>menu</mat-icon>
+          </button>
+
+          <img
+            [src]="_chatService.currentOpenChat()?.profilePicture || 'https://randomuser.me/api/portraits/lego/5.jpg'"
+            alt="User Profile Picture"
+            class="rounded-circle border border-2 shadow-sm"
+            style="width: 50px; height: 50px; object-fit: cover;"
+          >
+          <div>
+            <h6 class="fw-semibold mb-0 text-dark">
+              {{ _chatService.currentOpenChat()?.fullName | titlecase }}
+            </h6>
+            <small class="text-muted">
+              {{ _chatService.status(_chatService.currentOpenChat()?.userName!) }}
+            </small>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <mat-icon
+            class="text-secondary"
+            style="cursor: pointer;"
+            title="Start Video Call"
+            (click)="displayDialog(_chatService.currentOpenChat()!.id)">
+            video_call
+          </mat-icon>
+          <mat-icon
+            class="text-secondary d-none d-md-block"
+            style="cursor: pointer;"
+            title="View Info"
+            (click)="toggleRightSidebar()">
+            info
+          </mat-icon>
+          <button class="btn btn-light d-md-none p-2 mobile-menu-btn" (click)="toggleRightSidebar()" title="View Info">
+            <mat-icon>info</mat-icon>
+          </button>
         </div>
       </div>
 
-      <div class="d-flex align-items-center gap-3">
-        <mat-icon class="text-secondary" style="cursor: pointer;" title="Start Video Call">video_call</mat-icon>
-        <mat-icon class="text-secondary d-none d-md-block" style="cursor: pointer;" title="View Info" (click)="toggleRightSidebar()">info</mat-icon>
-        
-        <!-- Mobile Info Button (Right Sidebar) -->
-        <button class="btn btn-light d-md-none p-2 mobile-menu-btn" (click)="toggleRightSidebar()" title="View Info">
-          <mat-icon>info</mat-icon>
-        </button>
-      </div>
-    </div>
-
-    <!-- Chat Body -->
-    <div class="flex-grow-1 overflow-hidden d-flex flex-column bg-light">
-      <div class="flex-grow-1 overflow-auto pb-2" style="scrollbar-width: thin;">
-        <app-chat-box></app-chat-box>
-      </div>
-    </div>
-
-    <!-- Chat Input -->
-    <div class="chat-input border-top bg-white px-4 py-3 position-relative">
-
-      <!-- Emoji Picker -->
-      @if (showEmojiPicker) {
-        <div class="emoji-picker-container">
-          <emoji-mart
-            (emojiSelect)="addEmoji($event)"
-            set="apple"
-            [perLine]="9"
-            [showPreview]="true"
-          ></emoji-mart>
+      <!-- Chat Body -->
+      <div class="flex-grow-1 overflow-hidden d-flex flex-column bg-light">
+        <div class="flex-grow-1 overflow-auto pb-2" style="scrollbar-width: thin;">
+          <app-chat-box></app-chat-box>
         </div>
-      }
+      </div>
 
-      <div class="d-flex align-items-end gap-3 position-relative">
-        <!-- Emoji Button -->
-        <button
-          class="btn btn-light rounded-circle d-flex align-items-center justify-content-center border shadow-sm"
-          style="width: 42px; height: 42px;"
-          (click)="toggleEmojiPicker()"
-          title="Add Emoji"
-          type="button"
-        >
-          <mat-icon class="text-secondary" style="font-size: 20px;">emoji_emotions</mat-icon>
-        </button>
+      <!-- Chat Input -->
+      <div class="chat-input border-top bg-white px-4 py-3 position-relative">
+        @if (showEmojiPicker) {
+          <div class="emoji-picker-container">
+            <emoji-mart
+              (emojiSelect)="addEmoji($event)"
+              set="apple"
+              [perLine]="9"
+              [showPreview]="true">
+            </emoji-mart>
+          </div>
+        }
 
-        <!-- Message Box -->
-        <textarea
-          [(ngModel)]="message"
-          (input)="_chatService.notifyTyping()"
-          (input)="autoResize($event)"
-          class="form-control chat-textarea rounded-pill px-4 py-2 border-0 shadow-sm flex-grow-1"
-          placeholder="Type your message..."
-          (keydown)="onKeyDown($event)"
-          rows="1"
-          (click)="showEmojiPicker = false"
-        ></textarea>
+        <div class="d-flex align-items-end gap-3 position-relative">
+          <button
+            class="btn btn-light rounded-circle d-flex align-items-center justify-content-center border shadow-sm"
+            style="width: 42px; height: 42px;"
+            (click)="toggleEmojiPicker()"
+            title="Add Emoji"
+            type="button">
+            <mat-icon class="text-secondary" style="font-size: 20px;">emoji_emotions</mat-icon>
+          </button>
 
+          <textarea
+            [(ngModel)]="message"
+            (input)="_chatService.notifyTyping()"
+            (input)="autoResize($event)"
+            class="form-control chat-textarea rounded-pill px-4 py-2 border-0 shadow-sm flex-grow-1"
+            placeholder="Type your message..."
+            (keydown)="onKeyDown($event)"
+            rows="1"
+            (click)="showEmojiPicker = false">
+          </textarea>
 
-        <!-- Send Button -->
-        <button
-          class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
-          style="width: 42px; height: 42px;"
-          (click)="sendMessage()"
-          type="button"
-        >
-          <mat-icon class="text-white" style="font-size: 20px;">send</mat-icon>
-        </button>
+          <button
+            class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+            style="width: 42px; height: 42px;"
+            (click)="sendMessage()"
+            type="button">
+            <mat-icon class="text-white" style="font-size: 20px;">send</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-} @else {
-  <div class="d-flex flex-column align-items-center bg-white justify-content-center h-100 text-center p-4 bg-light rounded-3 shadow-sm no-chat-view">
-    <!-- Mobile Menu Button for Empty State -->
-    <button class="btn btn-primary d-md-none mb-4 px-4 py-2" (click)="toggleLeftSidebar()">
-      <mat-icon class="me-2">contacts</mat-icon>
-      Open Contacts
-    </button>
-    
-    <img src="openchat.png" alt="Open Chat Illustration" class="img-fluid mb-4 no-chat-image" style="max-width: 280px; height: auto;">
-    <h5 class="fw-semibold text-dark mb-1">No Chat Selected</h5>
-    <p class="text-muted small mb-0">
-      Choose a contact from the sidebar to start a conversation.
-    </p>
-  </div>
-}
+  }
+  @else {
+    <!-- Empty Chat State -->
+    <div class="d-flex flex-column align-items-center bg-white justify-content-center h-100 text-center p-4 bg-light rounded-3 shadow-sm no-chat-view">
+      <button class="btn btn-primary d-md-none mb-4 px-4 py-2" (click)="toggleLeftSidebar()">
+        <mat-icon class="me-2">contacts</mat-icon>
+        Open Contacts
+      </button>
+      <img src="openchat.png" alt="Open Chat Illustration" class="img-fluid mb-4 no-chat-image" style="max-width: 280px; height: auto;">
+      <h5 class="fw-semibold text-dark mb-1">No Chat Selected</h5>
+      <p class="text-muted small mb-0">
+        Choose a contact from the sidebar to start a conversation.
+      </p>
+    </div>
+  }
+</div>

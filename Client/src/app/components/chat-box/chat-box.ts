@@ -12,9 +12,19 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './chat-box.css'
 })
 export class ChatBox implements AfterViewChecked {
-  @ViewChild('chatBox', {read: ElementRef}) public chatBox?: ElementRef;
+  @ViewChild('chatBox', { read: ElementRef }) public chatBox?: ElementRef;
   _chatService = inject(ChatService);
   _authService = inject(AuthService);
+
+  isFakeLoading = true; // 👈 initially true
+  private pageNumber = 2;
+
+  constructor() {
+    // Simulate fake loading for 2 seconds
+    setTimeout(() => {
+      this.isFakeLoading = false;
+    }, 2000);
+  }
 
   ngAfterViewChecked(): void {
     if (this._chatService.autScrollEnable()) {
@@ -27,17 +37,17 @@ export class ChatBox implements AfterViewChecked {
     this.chatBox!.nativeElement.scrollTo({
       top: this.chatBox!.nativeElement.scrollHeight,
       behavior: 'smooth'
-    })
+    });
   }
+
   scrollToTop() {
     this._chatService.autScrollEnable.set(false);
     this.chatBox!.nativeElement.scrollTo({
       top: 0,
       behavior: 'smooth'
-    })
+    });
   }
 
-  private pageNumber = 2;
   loadMoreMessages() {
     this.pageNumber++;
     this._chatService.loadMoreMessages(this.pageNumber);

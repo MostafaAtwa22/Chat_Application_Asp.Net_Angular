@@ -1,35 +1,84 @@
+.video-container {
+  background: radial-gradient(circle at center, #1c1c1c, #000);
+  position: relative;
+}
+
+.remote-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+  filter: brightness(0.95);
+}
+
+.local-video {
+  top: 1rem;
+  right: 1rem;
+  width: 25%;
+  height: auto;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  transition: all 0.3s ease;
+}
+.local-video:hover {
+  transform: scale(1.05);
+}
+
+.controls-bar {
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1rem 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .call-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.6rem;
   font-weight: 600;
-  padding: 0.7rem 1.5rem;
+  padding: 0.8rem 1.6rem;
   border: none;
   border-radius: 2rem;
   font-size: 1rem;
-  transition: all 0.3s ease;
   color: white;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
 
 .call-btn mat-icon {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .accept-btn {
-  background-color: #28a745;
+  background-color: #28c76f;
 }
 .accept-btn:hover {
-  background-color: #218838;
-  transform: translateY(-2px);
+  background-color: #22b866;
+  transform: translateY(-2px) scale(1.05);
 }
 
 .decline-btn {
-  background-color: #dc3545;
+  background-color: #ea5455;
 }
 .decline-btn:hover {
-  background-color: #c82333;
-  transform: translateY(-2px);
+  background-color: #d63f40;
+  transform: translateY(-2px) scale(1.05);
+}
+
+.start-btn {
+  background-color: #007bff;
+}
+.start-btn:hover {
+  background-color: #0069d9;
+  transform: translateY(-2px) scale(1.05);
 }
 
 .end-btn {
@@ -37,22 +86,53 @@
 }
 .end-btn:hover {
   background-color: #5a6268;
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.05);
 }
 
-video {
-  object-fit: cover;
-  border-radius: 8px;
+/* Smooth entry animation for controls */
+.controls-bar {
+  animation: slideUp 0.5s ease;
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
+  .local-video {
+    width: 35%;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
   .call-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.1rem;
     font-size: 0.9rem;
   }
-  video {
-    width: 35%;
-    top: 1rem;
-    right: 1rem;
+
+  .controls-bar {
+    gap: 0.8rem;
+    padding: 0.8rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .local-video {
+    width: 40%;
+  }
+
+  .call-btn span {
+    display: none; /* show icons only on small screens */
+  }
+
+  .call-btn mat-icon {
+    font-size: 1.6rem;
   }
 }

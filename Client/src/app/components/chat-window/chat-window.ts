@@ -1,10 +1,13 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { ChatService } from '../../services/chat-service';
 import { TitleCasePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { ChatBox } from "../chat-box/chat-box";
 import { PickerModule, SkinComponent } from '@ctrl/ngx-emoji-mart';
+import { VideoChatService } from '../../services/video-chat';
+import { MatDialog } from '@angular/material/dialog';
+import { VideoChat } from '../../video-chat/video-chat';
 
 @Component({
   selector: 'app-chat-window',
@@ -12,10 +15,25 @@ import { PickerModule, SkinComponent } from '@ctrl/ngx-emoji-mart';
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.css'
 })
-export class ChatWindow {
+export class ChatWindow implements OnInit {
   @ViewChild('chatBox') chatContainer?: ElementRef;
+isLoading: boolean = true;
+
+  ngOnInit() {
+    this.isLoading = true;
+    this.loadChat();
+  }
+
+  loadChat() {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1500); // fake delay for demonstration
+  }
 
   _chatService = inject(ChatService);
+  _signalRService = inject(VideoChatService);
+  _dialog = inject(MatDialog);
+
   message: string = '';
   showEmojiPicker = false;
 
@@ -66,7 +84,7 @@ export class ChatWindow {
   toggleLeftSidebar() {
     const sidebar = document.querySelector('.chat-left-sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
-    
+
     if (sidebar && overlay) {
       sidebar.classList.toggle('show');
       overlay.classList.toggle('show');
@@ -76,10 +94,19 @@ export class ChatWindow {
   toggleRightSidebar() {
     const sidebar = document.querySelector('.chat-right-sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
-    
+
     if (sidebar && overlay) {
       sidebar.classList.toggle('show');
       overlay.classList.toggle('show');
     }
+  }
+  displayDialog(reciverId: string) {
+    this._signalRService.remoteUserId = reciverId;
+    this._dialog.open(VideoChat, {
+      width: "400px",
+      height: "600px",
+      disableClose: true,
+      autoFocus: false
+    })
   }
 }
