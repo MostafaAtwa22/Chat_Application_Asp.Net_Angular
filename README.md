@@ -91,7 +91,6 @@ From repo root:
 
 Backend:
 ```powershell
-cd "d:\programming\Full-stack projects\Chat_Application\API"
 dotnet restore
 dotnet build
 dotnet run
@@ -100,7 +99,6 @@ dotnet run
 
 Frontend:
 ```powershell
-cd "d:\programming\Full-stack projects\Chat_Application\Client"
 npm install
 npm start         # or: ng serve --proxy-config proxy.conf.json --open
 ```
@@ -128,7 +126,6 @@ Use a proxy config (example `proxy.conf.json`) to forward API calls to the backe
 
 From API project folder:
 ```powershell
-cd "d:\programming\Full-stack projects\Chat_Application\API"
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
@@ -166,7 +163,6 @@ Check `API/Hubs/ChatHub.cs` for server-side method names and event names.
 
 1. Build client:
 ```powershell
-cd "d:\programming\Full-stack projects\Chat_Application\Client"
 npm run build -- --configuration production
 ```
 
@@ -175,7 +171,6 @@ npm run build -- --configuration production
 
 3. Publish API:
 ```powershell
-cd "d:\programming\Full-stack projects\Chat_Application\API"
 dotnet publish -c Release -o publish
 # deploy 'publish' folder to your host (Azure, Docker image, etc.)
 ```
