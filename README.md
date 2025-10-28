@@ -277,15 +277,3 @@ feat(chat): <short description>
 - SSL issues in dev: use `secure: false` in proxy or trust dev certificate (`dotnet dev-certs https --trust`).
 - EF Core migrations fail: check connection string and database permissions.
 
----
-
-## License
-
-Specify your license (e.g., MIT) or add a `LICENSE` file in repo root.
-
----
-
-If you want, I can:
-- Add the README file to the repository now,
-- Create example `proxy.conf.json`, `proxy` npm script, or Docker files,
-- Generate a GitHub Actions workflow file.
